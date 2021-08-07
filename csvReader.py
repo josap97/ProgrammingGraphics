@@ -1,4 +1,5 @@
 import csv
+import os
 
 def readCSV(path):
         with open(path, newline='') as csvfile:

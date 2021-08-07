@@ -1,28 +1,6 @@
 from numpy import floor, trunc
 import math
 
-# Print iterations progress
-def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, length = 100, fill = '█', printEnd = "\r"):
-    """
-    Call in a loop to create terminal progress bar
-    @params:
-        iteration   - Required  : current iteration (Int)
-        total       - Required  : total iterations (Int)
-        prefix      - Optional  : prefix string (Str)
-        suffix      - Optional  : suffix string (Str)
-        decimals    - Optional  : positive number of decimals in percent complete (Int)
-        length      - Optional  : character length of bar (Int)
-        fill        - Optional  : bar fill character (Str)
-        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
-    """
-    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
-    filledLength = int(length * iteration // total)
-    bar = fill * filledLength + '-' * (length - filledLength)
-    print(f'\r{prefix} |{bar}| {percent}% {suffix}', end = printEnd)
-    # Print New Line on Complete
-    if iteration == total: 
-        print()
-
 def formatTimeLarge(timeString):
         if(float(timeString)<1):
                 timeLarge = str("00")
@@ -31,12 +9,39 @@ def formatTimeLarge(timeString):
                 timeSec = str(math.trunc(float(timeString))).zfill(2)
                 timeLarge = timeSec
         elif(float(timeString)>=60):
-                timeMin = math.trunc(float(timeString))
-                timeSec = str(math.trunc(float(timeString) - timeMin)).zfill(2)
-                timeLarge = timeMin + ":" + timeSec
+                timeMin = math.trunc(float(timeString)/60)
+                timeSec = str(math.trunc(float(timeString) - timeMin*60)).zfill(2)
+                timeLarge = str(timeMin) + ":" + timeSec
         else:
                 timeLarge = "problem: " + timeString
         return timeLarge
 
 def ERSChargeHeight(charge):
         return 80 + 282*charge
+
+def getTyreName(tyreString):
+        split = str(tyreString).split(":")
+        tyreName = split[1].lower()
+        if("c" in tyreName):
+                if("4" in tyreName):
+                        image = "medium 2019.png"
+                elif("5" in tyreName):
+                        image = "hard.png"
+                else:
+                        image = "soft 2019.png"
+        else:
+                if("ultra" in tyreName):
+                        image =  "ultra.png"
+                elif("super" in tyreName):
+                        image = "super.png"
+                elif("soft" in tyreName):
+                        image = "soft.png"
+                elif("medium" in tyreName):
+                        image = "medium.png"
+                elif("hard" in tyreName):
+                        image = "hard.png"
+                elif("hyper" in tyreName):
+                        image = "hyper.png"
+                else:
+                        image = "soft 2019.png"
+        return "assets/tyres/" + image
