@@ -15,6 +15,7 @@ The script uses MOTEC data to create graphics but, for some reason, you cannot j
 1. Open the data you want converted in MOTEC i2 Pro and export them to a CSV and save it somewhere else on your system
     a. Export to CSV at any sample rate you want but do include both `time` and `distance` data
 2. Open the exported CSV in excel and `Save as...`  a `.csv` file without making any changes to the `/data/` folder under a recognisable name
+The script will convert each and every sample of data you give as input, this means that if you want graphics for a single lap you must only export that single lap. The script will not look for your fastest lap or detect complete laps, it will just convert the entire exported range of data.
 ## Running the code
 That's it, all the preparation has been done and you can run the `*.bat` file or open the `main.py` file in a Python interpreter and run it. This will automatically run the code for all csv files located in the data folder and export the video with the same name in the `/output/` folder.
 ## Using the resulting video
