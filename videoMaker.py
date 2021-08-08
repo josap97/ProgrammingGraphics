@@ -5,11 +5,12 @@ from PIL import ImageFont, ImageDraw, Image
 from csvReader import *
 from format import *
 from functions import *
-import os
+import settings
 
-def makeVideo(file, driverName):
+def makeVideo():
         # Define user Inputs
-        fullArray = readCSV('data/' + str(file) + '.csv')
+        fullArray = readCSV('data/' + settings.currentFileName + '.csv')
+        driverName = settings.driverName
 
         # Define Arrays
         npFullArray = np.array(fullArray)
@@ -22,9 +23,10 @@ def makeVideo(file, driverName):
         brakePosArr = np.transpose(npFullArray[:,19]).astype(np.float64)
         lateralGArr = np.transpose(npFullArray[:,24]).astype(np.float64)
         longiGArr = np.transpose(npFullArray[:,25]).astype(np.float64)
+        carPositionXArr = np.transpose(npFullArray[:,32]).astype(np.float64)
+        carPositionYArr = np.transpose(npFullArray[:,33]).astype(np.float64)
         DRSActArr = np.transpose(npFullArray[:,25+26])
         DRSAvailArr = np.transpose(npFullArray[:,2*26])
-        ERSCharge = np.transpose(npFullArray[:,2*26+16]).astype(np.float64)
         RPMArr = np.transpose(npFullArray[:,2*26+9]).astype(np.int64)
         gearArr = np.transpose(npFullArray[:,2*26+12])
         speedArr = np.transpose(npFullArray[:,2*26+13]).astype(np.float64)
@@ -35,11 +37,15 @@ def makeVideo(file, driverName):
         racePositionArr = np.transpose(npFullArray[:,90])
         noFrames = len(timeArr)
 
+        # Calculate ERS
+        ERSCharge = np.transpose(npFullArray[:,2*26+16]).astype(np.float64)
+        ERSdeployedArr = np.transpose(npFullArray[:,69]).astype(np.float64)
+        ERSMax = max(ERSdeployedArr)
+        ERSdeployed = np.multiply(ERSdeployedArr, 1/ERSMax)
+
         # Define tempStores
         lastSectorPrev = lastSectorArr[0]
-        lastSectorNo = 0
         sectorImprovementArr = []
-        deltaSectorPrev = 0
         sectorImprovement = 0
 
         # Define fonts
@@ -73,7 +79,10 @@ def makeVideo(file, driverName):
         # Define video output
         FPS = sampleRate
         fourcc = VideoWriter_fourcc(*'MP42')
-        video = VideoWriter('./output/'+ file + '.avi', fourcc, float(FPS), (width, height))
+        video = VideoWriter('./output/'+ settings.currentFileName + '.avi', fourcc, float(FPS), (width, height))
+
+        trackMapMax = generateTrackMap(carPositionXArr, carPositionYArr, backgroundColour, height, width)
+        trackMapImage = Image.open('assets/trackmaps/'+ settings.currentFileName +'.png')
 
         for i in range(0, int(FPS)):
                 frame = background
@@ -84,7 +93,6 @@ def makeVideo(file, driverName):
                 img_pil.paste(topBar, (posX, 0), topBar)
                 draw.text((posX+413, 65), racePositionArr[0], font = font75, fill=(0, 0, 0, 0), anchor="mm")
                 draw.text((posX+513, 65), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
-                #frame = np.array(img_pil)
                 frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
                 video.write(frame)
                 printProgressBar(i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete', length = 50)
@@ -101,7 +109,6 @@ def makeVideo(file, driverName):
                 draw.text((513, 65), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
                 tyreImage.putalpha(math.trunc(QuadraticEaseOut(i, FPS, 255)))
                 img_pil.paste(tyreImage, (2300, 10), tyreImage)
-                #frame = np.array(img_pil)
                 frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
                 video.write(frame)
                 printProgressBar(int(FPS)+i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete', length = 50)
@@ -125,7 +132,8 @@ def makeVideo(file, driverName):
                 draw.text((960, 347), timeLarge, font = font200, fill=(255,255,255,0), anchor="rb")
 
                 # Bar Inputs
-                draw.rectangle((1421, math.trunc(140+280*(100 - ERSCharge[i])/100), 1444, 140 + 280), fill=(26, 216, 244)) # Inverted colour RGBBGR
+                draw.rectangle((1421, math.trunc(140+280*(100 - ERSCharge[i])/100), 1444, 140 + 280), fill=(16, 132, 149)) # Inverted colour RGBBGR
+                draw.rectangle((1426, math.trunc(140+np.multiply(ERSdeployed[i], 280)), 1447, 140 + 280), fill=(26, 216, 244)) # Inverted colour RGBBGR
                 draw.rectangle((1840, math.trunc(140+280*(100 - throttlePosArr[i])/100), 1863, 140 + 280), fill=(0, 188, 0))
                 draw.rectangle((1806, math.trunc(140+280*(100 - brakePosArr[i])/100), 1829, 140 + 280), fill=(188, 0, 0)) # Inverted colour RGBBGR
 
@@ -133,6 +141,12 @@ def makeVideo(file, driverName):
                 gForceX = 1602 + math.trunc(140*(lateralGArr[i])/5)
                 gForceY = 281 - math.trunc(140*(longiGArr[i]/5))
                 draw.ellipse((gForceX-5, gForceY-5, gForceX+5, gForceY+5), fill=(255, 0, 0))
+
+                # Draw Car on TrackMap
+                img_pil.paste(trackMapImage, (0, 0), trackMapImage)
+                carCoords = carCoordOnTrackMap(carPositionXArr[i], carPositionYArr[i], height, width, trackMapMax)
+                radius = 5
+                draw.ellipse((round(carCoords[0]-radius), round(carCoords[1]-radius), round(carCoords[0]+radius), round(carCoords[1]+radius)), fill=(255, 0, 0))
 
                 # Steering and Inputs
                 steeringAngle = -1*steeringAngleArr[i]
@@ -188,7 +202,6 @@ def makeVideo(file, driverName):
                                 img_pil.paste(sectorPurpleImage, (posX, posY), sectorPurpleImage)
 
                 # Adding Generated Frame to the array
-                #frame = np.array(img_pil)
                 frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
                 video.write(frame)
                 printProgressBar(2*int(FPS)+i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete', length = 50)
@@ -235,7 +248,6 @@ def makeVideo(file, driverName):
                         img_pil.paste(sectorPurpleImage, (posX, posY), sectorPurpleImage)
 
         # Adding Generated Frame to the array
-        #frame = np.array(img_pil)
         frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
         for i in range(0, int(FPS)*10):
                 video.write(frame)
