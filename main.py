@@ -1,14 +1,21 @@
 from videoMaker import *
 import numpy as np
-import os, glob, settings, docFormatter
+import os, glob, settings, configparser
 
 extension = 'csv'
 os.chdir('data/')
 fileNames = glob.glob('*.{}'.format(extension))
 os.chdir('../')
 print("Qeuing " + str(len(fileNames)) + " graphics renders;")
+
+# Read the cofig file
+config = configparser.ConfigParser()
+thisfolder = os.path.dirname(os.path.abspath(__file__))
+initfile = os.path.join(thisfolder, 'assets/config.ini')
+config.read(initfile)
 settings.init()
-settings.teamArray = readConfig()
+settings.showTrackMap = config.getboolean('General', 'showTrackMap')
+settings.showTeamName = config.getboolean('General', 'showTeamName')
 for file in range(0, len(fileNames)):
         base = os.path.basename('data/' + fileNames[file])
         name = os.path.splitext(base)
@@ -16,14 +23,14 @@ for file in range(0, len(fileNames)):
 
         fileSplit = (name[0][1:]).split(')')
         infoArray = fileSplit[0].split(',')
-        if(infoArray[2] in settings.teamArray):
-                indices = np.where(settings.teamArray == infoArray[2])
+        if(config.has_option('TEAM'+infoArray[2], 'name')):
 
                 # Define your user Settings
                 settings.driverName = infoArray[0]
                 settings.driverNumber = infoArray[1]
-                settings.teamName = settings.teamArray[int(indices[0]),0]
-                settings.teamColour = (int(settings.teamArray[int(indices[0]),1]), int(settings.teamArray[int(indices[0]),2]), int(settings.teamArray[int(indices[0]),3]))
+                settings.teamName = config.get('TEAM'+infoArray[2], 'name')
+                colourFull = (config.get('TEAM'+infoArray[2], 'colour')).split(',')
+                settings.teamColour = (int(colourFull[0]), int(colourFull[1]), int(colourFull[2]))
                 print("Working on: #" + str(file+1) + ": " + name[0])
                 makeVideo()
         else:

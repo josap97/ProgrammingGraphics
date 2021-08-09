@@ -84,8 +84,9 @@ def makeVideo():
         fourcc = VideoWriter_fourcc(*'MP42')
         video = VideoWriter('./output/'+ settings.currentFileName + '.avi', fourcc, float(FPS), (width, height))
 
-        trackMapMax = generateTrackMap(carPositionXArr, carPositionYArr, backgroundColour, height, width)
-        trackMapImage = Image.open('assets/trackmaps/'+ settings.currentFileName +'.png')
+        if (settings.showTrackMap):
+                trackMapMax = generateTrackMap(carPositionXArr, carPositionYArr, backgroundColour, height, width)
+                trackMapImage = Image.open('assets/trackmaps/'+ settings.currentFileName +'.png')
 
         for i in range(0, int(FPS)):
                 frame = background
@@ -100,7 +101,7 @@ def makeVideo():
                 draw.rectangle((posX + 480, 17, posX + 493, 112), fill=teamColour)
                 frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
                 video.write(frame)
-                printProgressBar(i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete', length = 50)
+                printProgressBar(i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete')
 
         for i in range(0, int(FPS)):
                 frame = background
@@ -116,9 +117,12 @@ def makeVideo():
                 draw.rectangle((480, 17, 493, 112), fill=teamColour)
                 tyreImage.putalpha(math.trunc(QuadraticEaseOut(i, FPS, 255)))
                 img_pil.paste(tyreImage, (2300, 10), tyreImage)
+                if(settings.showTrackMap):
+                        #trackMapImage.putalpha(math.trunc(QuadraticEaseOut(i, FPS, 255)))
+                        img_pil.paste(trackMapImage, (0, 0), trackMapImage)
                 frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
                 video.write(frame)
-                printProgressBar(int(FPS)+i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete', length = 50)
+                printProgressBar(int(FPS)+i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete')
 
         for i in range(0, noFrames):
 
@@ -151,10 +155,11 @@ def makeVideo():
                 draw.ellipse((gForceX-5, gForceY-5, gForceX+5, gForceY+5), fill=(255, 0, 0))
 
                 # Draw Car on TrackMap
-                img_pil.paste(trackMapImage, (0, 0), trackMapImage)
-                carCoords = carCoordOnTrackMap(carPositionXArr[i], carPositionYArr[i], height, width, trackMapMax)
-                radius = 7
-                draw.ellipse((round(carCoords[0]-radius), round(carCoords[1]-radius), round(carCoords[0]+radius), round(carCoords[1]+radius)), fill=teamColour)
+                if(settings.showTrackMap):
+                        img_pil.paste(trackMapImage, (0, 0), trackMapImage)
+                        carCoords = carCoordOnTrackMap(carPositionXArr[i], carPositionYArr[i], height, width, trackMapMax)
+                        radius = 7
+                        draw.ellipse((round(carCoords[0]-radius), round(carCoords[1]-radius), round(carCoords[0]+radius), round(carCoords[1]+radius)), fill=teamColour)
 
                 # Steering and Inputs
                 steeringAngle = -1*steeringAngleArr[i]
@@ -213,7 +218,7 @@ def makeVideo():
                 # Adding Generated Frame to the array
                 frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
                 video.write(frame)
-                printProgressBar(2*int(FPS)+i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete', length = 50)
+                printProgressBar(2*int(FPS)+i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete')
         
         # Setting up final frames for the laptime show
         # Setup Frame
