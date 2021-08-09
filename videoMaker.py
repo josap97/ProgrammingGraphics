@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from cv2 import VideoWriter, VideoWriter_fourcc
 from PIL import ImageFont, ImageDraw, Image
-from csvReader import *
+from docFormatter import *
 from format import *
 from functions import *
 import settings
@@ -75,6 +75,9 @@ def makeVideo():
         barInputs = Image.open("assets/bottomBar/barInputs.png")
         tyreImage = Image.open(tire)
         tyreImage = tyreImage.resize((125, 125))
+        #teamBar = Image.open('assets/teamBars/' + settings.teamName + '.png')
+        #teamBar = teamBar.resize((13, 95))
+        teamColour = settings.teamColour
 
         # Define video output
         FPS = sampleRate
@@ -92,7 +95,9 @@ def makeVideo():
                 posX = math.trunc(-width + QuadraticEaseOut(i, FPS, width))
                 img_pil.paste(topBar, (posX, 0), topBar)
                 draw.text((posX+413, 65), racePositionArr[0], font = font75, fill=(0, 0, 0, 0), anchor="mm")
-                draw.text((posX+513, 65), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
+                draw.text((posX+533, 65), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
+                draw.text((posX+2250, 65), str(settings.driverNumber), font = font100, fill=teamColour, anchor="mm")
+                draw.rectangle((posX + 480, 17, posX + 493, 112), fill=teamColour)
                 frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
                 video.write(frame)
                 printProgressBar(i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete', length = 50)
@@ -106,7 +111,9 @@ def makeVideo():
                 img_pil.paste(bottomBar, (0, posY), bottomBar)
                 img_pil.paste(topBar, (0, 0), topBar)
                 draw.text((413, 65), racePositionArr[0], font = font75, fill=(0, 0, 0, 0), anchor="mm")
-                draw.text((513, 65), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
+                draw.text((533, 65), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
+                draw.text((math.trunc(2250-QuadraticEaseOut(i, FPS, 100)), 65), str(settings.driverNumber), font = font100, fill=teamColour, anchor="mm")
+                draw.rectangle((480, 17, 493, 112), fill=teamColour)
                 tyreImage.putalpha(math.trunc(QuadraticEaseOut(i, FPS, 255)))
                 img_pil.paste(tyreImage, (2300, 10), tyreImage)
                 frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
@@ -124,6 +131,7 @@ def makeVideo():
                 img_pil.paste(bottomBar, (0, 0), bottomBar)
                 img_pil.paste(topBar, (0, 0), topBar)
                 img_pil.paste(barInputs, (0, 0), barInputs)
+                draw.rectangle((480, 17, 493, 112), fill=teamColour)
 
                 # Calculating Time Text
                 timeLarge  = formatTimeLarge(timeArr[i])
@@ -145,8 +153,8 @@ def makeVideo():
                 # Draw Car on TrackMap
                 img_pil.paste(trackMapImage, (0, 0), trackMapImage)
                 carCoords = carCoordOnTrackMap(carPositionXArr[i], carPositionYArr[i], height, width, trackMapMax)
-                radius = 5
-                draw.ellipse((round(carCoords[0]-radius), round(carCoords[1]-radius), round(carCoords[0]+radius), round(carCoords[1]+radius)), fill=(255, 0, 0))
+                radius = 7
+                draw.ellipse((round(carCoords[0]-radius), round(carCoords[1]-radius), round(carCoords[0]+radius), round(carCoords[1]+radius)), fill=teamColour)
 
                 # Steering and Inputs
                 steeringAngle = -1*steeringAngleArr[i]
@@ -173,7 +181,8 @@ def makeVideo():
 
                 # Top bar
                 draw.text((413, 65), racePositionArr[i], font = font75, fill=(0, 0, 0, 0), anchor="mm")
-                draw.text((513, 65), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
+                draw.text((533, 65), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
+                draw.text((2150, 65), str(settings.driverNumber), font = font100, fill=teamColour, anchor="mm")
                 img_pil.paste(tyreImage, (2300, 10), tyreImage)
 
                 # Sector Analysis
@@ -215,6 +224,7 @@ def makeVideo():
         draw.rectangle((0, 0, width, height), fill=backgroundColour)
         img_pil.paste(bottomBar, (0, 0), bottomBar)
         img_pil.paste(topBar, (0, 0), topBar)
+        draw.rectangle((480, 17, 493, 112), fill=teamColour)
 
         # Calculating Time Text
         timeLarge  = formatTimeLarge(lapTime)
@@ -225,7 +235,8 @@ def makeVideo():
 
         # Top bar
         draw.text((413, 65), racePositionArr[-1], font = font75, fill=(0, 0, 0, 0), anchor="mm")
-        draw.text((513, 65), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
+        draw.text((533, 65), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
+        draw.text((2150, 65), str(settings.driverNumber), font = font100, fill=teamColour, anchor="mm")
         img_pil.paste(tyreImage, (2300, 10), tyreImage)
 
         # Sector Analysis

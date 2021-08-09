@@ -1,5 +1,6 @@
 
-# Create onscreen graphics from MOTEC data using Python
+# Create onscreen graphics from AC MOTEC data using Python
+The following scripts have been made to work with MOTEC telemetry captured with acti for Assetto Corsa. Unfortunately, no equivalent could be made to work with the data captured from Assetto Corsa Competizione 
 ## Installation
 Make sure you have `numpy` and `virtualenv` installed by running the following code in the terminal
 ```Batch
@@ -11,11 +12,28 @@ pip install opencv-python
 ```
 Unpack the python files and filestructure in the repositry to a folder on you desktop and change the `runGraphics.bat` file to match your installation.
 ## Data Preparation
-The script uses MOTEC data to create graphics but, for some reason, you cannot just use raw exports. Make sure to do the following
+The script uses MOTEC data to create graphics but, for some reason, you cannot just use raw exports. The script will convert each and every sample of data you give as input, this means that if you want graphics for a single lap you must only export that single lap. The script will not look for your fastest lap or detect complete laps, it will just convert the entire exported range of data. Make sure to do the following.
 1. Open the data you want converted in MOTEC i2 Pro and export them to a CSV and save it somewhere else on your system
     a. Export to CSV at any sample rate you want but do include both `time` and `distance` data
-2. Open the exported CSV in excel and `Save as...`  a `.csv` file without making any changes to the `/data/` folder under a recognisable name
-The script will convert each and every sample of data you give as input, this means that if you want graphics for a single lap you must only export that single lap. The script will not look for your fastest lap or detect complete laps, it will just convert the entire exported range of data.
+2. Open the exported CSV in excel and `Save as...`  a `.csv` file without making any changes to the `/data/` folder with the following name `(name,number,team) info.csv` where:
+    a. `name` is the driver name using normal latin characters
+    b. `number` is the number of the driver in the file, limited to max 3 numbers
+    c. `team` is the team name the driver drives for. You can add teams by changing the `assets/config.txt` file. By default you can choose for the following:
+        * ferrari
+        * forceIndia
+        * haas
+        * mclaren
+        * mercedes
+        * redBull
+        * renault
+        * sauber
+        * torroRosso
+        * williams
+        * alpine
+        * alphaTauri
+        * astonMartin
+        * alfaRomeo
+    d. `info` is a container for any information you want to add to the file name, the script does not look at this so if free to fill in as you please
 ## Running the code
 That's it, all the preparation has been done and you can run the `*.bat` file or open the `main.py` file in a Python interpreter and run it. This will automatically run the code for all csv files located in the data folder and export the video with the same name in the `/output/` folder.
 ## Using the resulting video

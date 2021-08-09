@@ -26,4 +26,4 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
         print()
 
 def QuadraticEaseOut(t, tMax, change):
-        return float(change)*((float(t)/float(tMax)-1)**3+1)
+    return float(change)*((float(t)/float(tMax)-1)**3+1)
