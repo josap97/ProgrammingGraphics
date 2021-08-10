@@ -18,7 +18,7 @@ The script uses MOTEC data to create graphics but, for some reason, you cannot j
 2. Open the exported CSV in excel and `Save as...`  a `.csv` file without making any changes to the `/data/` folder with the following name `(name,number,team) info.csv` where:
     a. `name` is the driver name using normal latin characters
     b. `number` is the number of the driver in the file, limited to max 3 numbers
-    c. `team` is the team name the driver drives for. You can add teams by changing the `assets/config.txt` file. By default you can choose for the following:
+    c. `team` is the team name the driver drives for. You can add teams by adding to the `assets/config.ini` file. By default you can choose for the following:
         * ferrari
         * forceIndia
         * haas

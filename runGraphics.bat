@@ -1,3 +1,3 @@
 @echo off
-"C:/Python39/python.exe" "e:/Tech/Development/projects/JoSaPol/JoSaPol Gaming/ProgrammingGraphics/main.py"
+python main.py
 pause
