@@ -49,3 +49,41 @@ def generatePDF():
                 raise ValueError('Error {} executing command: {}'.format(retcode, ' '.join(cmd)))
         os.unlink('data/cache/' + settings.currentFileName + '.tex')
         os.unlink('data/cache/' + settings.currentFileName + '.log')
+
+def readAC(dataArr):
+        result = dict()
+        # Define Arrays
+        npFullArray = np.array(dataArr)
+        result['FPS'] = npFullArray[8][1]
+        lapTime = npFullArray[9][1]
+        npFullArray = npFullArray[18:,:]
+        result['time'] = np.transpose(npFullArray[:,0])
+        result['delta'] = np.transpose(npFullArray[:,16]).astype(np.float64)
+        result['brake'] = np.transpose(npFullArray[:,19]).astype(np.float64)
+        result['RPM'] = np.transpose(npFullArray[:,2*26+9]).astype(np.int64)
+        result['gear'] = np.transpose(npFullArray[:,2*26+12])
+        result['speed'] = np.transpose(npFullArray[:,2*26+13]).astype(np.float64)
+        lastSectorArr = np.transpose(npFullArray[:,2*26+25]).astype(np.float64)
+        result['throttle'] = np.transpose(npFullArray[:,4*26+7]).astype(np.float64)
+        result['steering'] = np.transpose(npFullArray[:,3*26+25]).astype(np.float64)
+        result['maxRPM'] = max(np.transpose(npFullArray[:,2*26+9]).astype(np.int64))
+        return result
+
+def readACC(dataArr):
+        result = dict()
+        # Define Arrays
+        npFullArray = np.array(dataArr)
+        result['FPS'] = npFullArray[8][1]
+        lapTime = npFullArray[9][1]
+        npFullArray = npFullArray[18:,:]
+        result['time'] = np.transpose(npFullArray[:,0])
+        result['delta'] = ""
+        result['brake'] = np.transpose(npFullArray[:,7]).astype(np.float64)
+        result['RPM'] = np.transpose(npFullArray[:,11]).astype(np.float64)
+        result['gear'] = np.transpose(npFullArray[:,8])
+        result['speed'] = np.transpose(npFullArray[:,5]).astype(np.float64)
+        lastSectorArr = ""
+        result['throttle'] = np.transpose(npFullArray[:,6]).astype(np.float64)
+        result['steering'] = np.transpose(npFullArray[:,4]).astype(np.float64)
+        result['maxRPM'] = max(np.transpose(npFullArray[:,11]).astype(np.int64))
+        return result

@@ -33,18 +33,20 @@ def getTyreName(tyreString):
                 else:
                         image = "soft 2019.png"
         else:
-                if("ultra" in tyreName):
-                        image =  "ultra.png"
-                elif("super" in tyreName):
-                        image = "super.png"
-                elif("soft" in tyreName):
-                        image = "soft.png"
+                
+                if("soft" in tyreName):
+                        if("ultra" in tyreName):
+                                image =  "ultra.png"
+                        elif("super" in tyreName):
+                                image = "super.png"
+                        elif("hyper" in tyreName):
+                                image = "hyper.png"
+                        else:
+                                image = "soft.png"
                 elif("medium" in tyreName):
                         image = "medium.png"
                 elif("hard" in tyreName):
                         image = "hard.png"
-                elif("hyper" in tyreName):
-                        image = "hyper.png"
                 else:
                         image = "soft 2019.png"
         return "assets/tyres/" + image

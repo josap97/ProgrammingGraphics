@@ -75,8 +75,6 @@ def makeVideo():
         barInputs = Image.open("assets/bottomBar/barInputs.png")
         tyreImage = Image.open(tire)
         tyreImage = tyreImage.resize((125, 125))
-        #teamBar = Image.open('assets/teamBars/' + settings.teamName + '.png')
-        #teamBar = teamBar.resize((13, 95))
         teamColour = settings.teamColour
 
         # Define video output

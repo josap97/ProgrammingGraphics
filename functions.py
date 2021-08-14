@@ -1,3 +1,4 @@
+import math
 from typing import ChainMap
 from numpy import floor, trunc
 
@@ -22,6 +23,9 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 2, 
     # Print New Line on Complete
     if iteration == total: 
         print()
+
+def stProgressBar(iteration, total):
+    return math.trunc(iteration/total)
 
 def QuadraticEaseOut(t, tMax, change):
     return float(change)*((float(t)/float(tMax)-1)**3+1)
