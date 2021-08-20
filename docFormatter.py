@@ -52,6 +52,7 @@ def generatePDF():
 
 def readAC(dataArr):
         result = dict()
+        dataArr = csv.reader(dataArr.split('\n'), delimiter=',')
         # Define Arrays
         npFullArray = np.array(dataArr)
         result['FPS'] = npFullArray[8][1]
@@ -72,6 +73,7 @@ def readAC(dataArr):
 def readACC(dataArr):
         result = dict()
         # Define Arrays
+        dataArr = csv.reader(dataArr.split('\n'), delimiter=',')
         npFullArray = np.array(dataArr)
         result['FPS'] = npFullArray[8][1]
         lapTime = npFullArray[9][1]

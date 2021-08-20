@@ -272,5 +272,29 @@ def makeF1(fullArray):
         return "success"
 
 def makeGT(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,speedArr,RPMArr,MaxRPM):
+        # Define fonts
+        fontpath = "assets/fonts/GT-Regular"
+        font200 = ImageFont.truetype(fontpath, 200)
+        font150 = ImageFont.truetype(fontpath, 150)
+        font100 = ImageFont.truetype(fontpath, 100)
+        font75 = ImageFont.truetype(fontpath, 75)
+        font50 = ImageFont.truetype(fontpath, 50)
+        font25 = ImageFont.truetype(fontpath, 25)
+
+        # Define initial frame
+        background = cv2.imread("assets/bottomBar/backgroundBlue.png")
+        backgroundColour = (0, 0, 255)
+        height, width, layers = background.shape
+
+        # Define images
+        steeringWheel = Image.open("assets/icons/steeringWheel.png")
+        topBar = Image.open("assets/GTBar/mainBar.png")
+        teamColour = settings.teamColour
+
+        # Define video output
+        FPS = frameRate
+        fourcc = VideoWriter_fourcc(*'MP42')
+        video = VideoWriter('./output/'+ settings.currentFileName + '.avi', fourcc, float(FPS), (width, height))
+
         if not(deltaArr==""):
                 return "success"
