@@ -3,7 +3,7 @@
 The following scripts have been made to work with MOTEC telemetry captured with acti for Assetto Corsa. Unfortunately, no equivalent could be made to work with the data captured from Assetto Corsa Competizione 
 ## Installation
 Make sure you have `numpy` and `virtualenv` installed by running the following code in the terminal
-```Batch
+```sh
 pip install virtualenv
 virtualenv env --python=python3.6
 source env/bin/activate
@@ -11,6 +11,11 @@ pip install numpy
 pip install opencv-python
 ```
 Unpack the python files and filestructure in the repositry to a folder on you desktop and change the `runGraphics.bat` file to match your installation.
+
+In order to be able to run the webclient, make sure to have `streamlit` installed by
+```sh
+pip install streamlit
+```
 ## Data Preparation
 The script uses MOTEC data to create graphics but, for some reason, you cannot just use raw exports. The script will convert each and every sample of data you give as input, this means that if you want graphics for a single lap you must only export that single lap. The script will not look for your fastest lap or detect complete laps, it will just convert the entire exported range of data. Make sure to do the following.
 1. Open the data you want converted in MOTEC i2 Pro and export them to a CSV and save it somewhere else on your system

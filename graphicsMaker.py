@@ -272,8 +272,12 @@ def makeF1(fullArray):
         return "success"
 
 def makeGT(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,speedArr,RPMArr,MaxRPM):
+        progess = st.progress(0)
+        # Define user Inputs
+        driverName = settings.driverName
+
         # Define fonts
-        fontpath = "assets/fonts/GT-Regular"
+        fontpath = "assets/fonts/GT-Regular.otf"
         font200 = ImageFont.truetype(fontpath, 200)
         font150 = ImageFont.truetype(fontpath, 150)
         font100 = ImageFont.truetype(fontpath, 100)
@@ -289,12 +293,86 @@ def makeGT(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,s
         # Define images
         steeringWheel = Image.open("assets/icons/steeringWheel.png")
         topBar = Image.open("assets/GTBar/mainBar.png")
+        barInputs = Image.open("assets/GTBar/barInputs.png")
         teamColour = settings.teamColour
 
         # Define video output
-        FPS = frameRate
         fourcc = VideoWriter_fourcc(*'MP42')
-        video = VideoWriter('./output/'+ settings.currentFileName + '.avi', fourcc, float(FPS), (width, height))
+        video = VideoWriter('./output/'+ settings.currentFileName + '.avi', fourcc, float(frameRate), (width, height))
+
+        for i in range(0,int(frameRate)):
+                frame = background
+                img_pil = Image.fromarray(frame)
+                draw = ImageDraw.Draw(img_pil)
+                draw.rectangle((0, 0, width, height), fill=backgroundColour)
+                posX = math.trunc(-width + QuadraticEaseOut(i, frameRate, width))
+                img_pil.paste(topBar, (posX, 0), topBar)
+                draw.text((posX+533, 65), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
+                draw.text((posX+2250, 65), str(settings.driverNumber), font = font100, fill=teamColour, anchor="mm")
+                draw.rectangle((posX + 480, 17, posX + 493, 112), fill=teamColour)
+                frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+                video.write(frame)
+                progess.progess(stProgressBar(i+1, len(timeArr)+2*float(frameRate)))
+        
+        for i in range(0,int(frameRate)):
+                # Add growing input bar section
+                frame = background
+                img_pil = Image.fromarray(frame)
+                draw = ImageDraw.Draw(img_pil)
+                draw.rectangle((0, 0, width, height), fill=backgroundColour)
+                img_pil.paste(topBar, (0, 0), topBar)
+                draw.text((533, 65), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
+                draw.text((2250, 65), str(settings.driverNumber), font = font100, fill=teamColour, anchor="mm")
+                draw.rectangle((posX + 480, 17, 493, 112), fill=teamColour)
+                frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+                video.write(frame)
+                progess.progess(stProgressBar(float(frameRate)+i+1, len(timeArr)+2*float(frameRate)))
+        
+        for i in range(0, len(timeArr)):
+
+                # Setup Frame
+                frame = None
+                frame = background
+                img_pil = Image.fromarray(frame)
+                draw = ImageDraw.Draw(img_pil)
+                draw.rectangle((0, 0, width, height), fill=backgroundColour)
+                img_pil.paste(topBar, (0, 0), topBar)
+                img_pil.paste(barInputs, (0, 0), barInputs)
+                draw.rectangle((480, 17, 493, 112), fill=teamColour)
+
+                # Calculating Time Text
+                timeLarge  = formatTimeLarge(timeArr[i])
+                timeMil = str(float(timeArr[i]) - math.trunc(float(timeArr[i])))
+                draw.text((960, 347), timeMil[1:][:3], font = font150, fill=(255,255,255,0), anchor="lb")
+                draw.text((960, 347), timeLarge, font = font200, fill=(255,255,255,0), anchor="rb")
+
+                # Bar Inputs
+                draw.rectangle((1840, math.trunc(140+280*(100 - throttleArr[i])/100), 1863, 140 + 280), fill=(0, 188, 0))
+                draw.rectangle((1806, math.trunc(140+280*(100 - brakeArr[i])/100), 1829, 140 + 280), fill=(188, 0, 0)) # Inverted colour RGBBGR
+
+                # Steering and Inputs
+                steeringAngle = -1*steeringArr[i]
+                if(steeringAngle<0):
+                        steeringAngle = 360 + steeringAngle
+                img_pil.paste(steeringWheel.rotate(steeringAngle), (1910, 145), steeringWheel.rotate(steeringAngle))
+                if(RPMArr[i] > MaxRPM * 0.92):
+                        gearColour = (255, 0, 0, 0)
+                else:
+                        gearColour = (255,255,255,0)
+                draw.text((2010, 375), str(math.trunc(speedArr[i])), font = font50, fill=(255,255,255,0), anchor="ms")
+                draw.text((2010, 400), "Speed", font = font25, fill=(255,255,255,0), anchor="ms")
+                draw.text((2210, 200), "Gear", font = font50, fill=(255,255,255,0), anchor="ms")
+                draw.text((2210, 345), gearArr[i], font = font150, fill=gearColour, anchor="ms")
+
+
+                # Top bar
+                draw.text((533, 65), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
+                draw.text((2150, 65), str(settings.driverNumber), font = font100, fill=teamColour, anchor="mm")
+
+                # Adding Generated Frame to the array
+                frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+                video.write(frame)
+                progess.progess(stProgressBar(2*int(frameRate)+i+1, len(timeArr)+2*float(frameRate), prefix = 'Progress:', suffix = 'Complete'))
 
         if not(deltaArr==""):
                 return "success"
