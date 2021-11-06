@@ -1,4 +1,3 @@
-
 # Create onscreen graphics from AC MOTEC data using Python
 The following scripts have been made to work with MOTEC telemetry captured with acti for Assetto Corsa. Unfortunately, no equivalent could be made to work with the data captured from Assetto Corsa Competizione 
 ## Installation
@@ -48,5 +47,6 @@ It is not possible to generate a video with transparency layers, this is why the
 3. Apply the `Ultra Key` effect to the clip resulting from this repos script
 4. In the `Effect Controls` pane, click the colour picker icon and click on the blue background
 5. You can now finetune the look by changing the other sliders, I found that leaving the Setting to `Default` looks best
+If you use this for your own projects, please tag JoSaPolGaming on Twitter or Instagram. This is not a requirement but we would like to see what people create with it. We would like to ask you to link to this repo in your YouTube videos.
 ## Customisation
 It is possible to customise the way the graphics look by changing the images in `assets` to match what you want them to look like. The photoshop files are provided. However, do make sure that you export the files under the same name and with the same resolution! Equal aspect ratio simply is not enough as the images are pasted on the frame directly without any resizing. I may add this in the future but do not really see the point of spending that time for now.
