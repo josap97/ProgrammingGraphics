@@ -8,7 +8,7 @@ from functions import *
 import settings
 import streamlit as st
 
-def makeF1(fullArray):
+def makeF12017(fullArray):
         progess = st.progress(0)
         # Define user Inputs
         driverName = settings.driverName

@@ -24,7 +24,7 @@ if file:
         formContainer.write("Before qeuing " + str(len(file)) + " graphics renders, please choose the type of graphics you want to create and for what game. When you have made your initial choices, please click \"Check for more options\" to reload the form and add information such as the car brand when the option is available.")
         for f in range(0, len(file)):
                 #st.write(file[f].getvalue())
-                formContainer.selectbox('Select for ' + str(file[f].name), ['Assetto Corsa Formula 1', 'Assetto Corsa GT3', 'Assetto Corsa Competizione GTs'], key='graphicType'+str(f))
+                formContainer.selectbox('Select for ' + str(file[f].name), ['Assetto Corsa F1 post 2017','Assetto Corsa F1 2008', 'Assetto Corsa GTs', 'Assetto Corsa Competizione GTs'], key='graphicType'+str(f))
                 formContainer.checkbox('Add trackmap to the export', key='trackMap'+str(f))
                 if("GT" in st.session_state['graphicType'+str(f)]):
                         formContainer.selectbox('Car brand', brandArr, key='graphicBrand' + str(f))
@@ -59,11 +59,18 @@ if file:
                                 settings.driverName = infoArray[0]
                                 settings.driverNumber = infoArray[1]
                                 if(("F1" in st.session_state['graphicType'+str(i)]) and (config.has_option('TEAM'+infoArray[2], 'name'))):
-                                        settings.teamName = config.get('TEAM'+infoArray[2], 'name')
-                                        colourFull = (config.get('TEAM'+infoArray[2], 'colour')).split(',')
-                                        settings.teamColour = (int(colourFull[0]), int(colourFull[1]), int(colourFull[2]))
-                                        currInfo.text("Working on: #" + str(i+1) + ": " + name)
-                                        #graphicsMaker.makeF1(file[i].getvalue())
+                                        if("2017" in st.session_state['graphicType'+str(i)]):
+                                                settings.teamName = config.get('TEAM'+infoArray[2], 'name')
+                                                colourFull = (config.get('TEAM'+infoArray[2], 'colour')).split(',')
+                                                settings.teamColour = (int(colourFull[0]), int(colourFull[1]), int(colourFull[2]))
+                                                currInfo.text("Working on: #" + str(i+1) + ": " + name)
+                                                #graphicsMaker.makeF12017(file[i].getvalue())
+                                        elif("2008" in st.session_state['graphicType'+str(i)]):
+                                                settings.teamName = config.get('TEAM'+infoArray[2], 'name')
+                                                colourFull = (config.get('TEAM'+infoArray[2], 'colour')).split(',')
+                                                settings.teamColour = (int(colourFull[0]), int(colourFull[1]), int(colourFull[2]))
+                                                currInfo.text("Working on: #" + str(i+1) + ": " + name)
+                                                #graphicsMaker.makeF12008(file[i].getvalue())
                                 elif("GT" in st.session_state['graphicType'+str(i)]):
                                         settings.teamName = config.get('TEAM'+infoArray[2], 'name')
                                         st.write(file[i].getvalue())

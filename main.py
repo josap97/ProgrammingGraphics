@@ -28,6 +28,7 @@ for file in range(0, len(fileNames)):
                 # Define your user Settings
                 settings.driverName = infoArray[0]
                 settings.driverNumber = infoArray[1]
+                settings.sessionYear = infoArray[3]
                 settings.teamName = config.get('TEAM'+infoArray[2], 'name')
                 colourFull = (config.get('TEAM'+infoArray[2], 'colour')).split(',')
                 settings.teamColour = (int(colourFull[0]), int(colourFull[1]), int(colourFull[2]))
