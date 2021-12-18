@@ -1,6 +1,6 @@
 from videoMaker import *
 import numpy as np
-import os, glob, settings, configparser
+import os, glob, settings, configparser, docFormatter, graphicsMaker
 
 extension = 'csv'
 os.chdir('data/')
@@ -23,17 +23,32 @@ for file in range(0, len(fileNames)):
 
         fileSplit = (name[0][1:]).split(')')
         infoArray = fileSplit[0].split(',')
-        if(config.has_option('TEAM'+infoArray[2], 'name')):
+        if(config.has_option('TEAM'+infoArray[3], 'name')):
 
                 # Define your user Settings
-                settings.driverName = infoArray[0]
-                settings.driverNumber = infoArray[1]
-                settings.sessionYear = infoArray[3]
-                settings.teamName = config.get('TEAM'+infoArray[2], 'name')
-                colourFull = (config.get('TEAM'+infoArray[2], 'colour')).split(',')
-                settings.teamColour = (int(colourFull[0]), int(colourFull[1]), int(colourFull[2]))
+                settings.sessionSim = infoArray[0]
+                settings.driverName = infoArray[1]
+                settings.driverNumber = infoArray[2]
+                settings.sessionYear = infoArray[4]
+                settings.sessionSeries = infoArray[5]
+                settings.teamName = config.get('TEAM'+infoArray[3], 'name')
                 print("Working on: #" + str(file+1) + ": " + name[0])
-                makeVideo()
+                if((settings.sessionSeries == "F1") and (settings.sessionYear == "2017")):
+                        colourFull = (config.get('TEAM'+infoArray[3], 'colour')).split(',')
+                        settings.teamColour = (int(colourFull[0]), int(colourFull[1]), int(colourFull[2]))
+                        makeVideo()
+                elif((settings.sessionSeries == "F1") and (settings.sessionYear == "2008")):
+                        colourFull = (config.get('TEAM'+infoArray[3], 'colour')).split(',')
+                        settings.teamColour = (int(colourFull[0]), int(colourFull[1]), int(colourFull[2]))
+                        #makeVideo()
+                        print("skip for now")
+                elif(settings.sessionSeries == "GT"):
+                        fullArray = readCSV('data/' + settings.currentFileName + '.csv')
+                        if(settings.sessionSim == "AC"):
+                                result = docFormatter.readACArr(fullArray)
+                        elif(settings.sessionSim == "AC"):
+                                result = docFormatter.readACCArr(fullArray)
+                        graphicsMaker.makeGT(result.FPS,result.time,result.gear,result.throttle,result.brake,result.delta,result.steering,result.speed,result.RPM,result.maxRPM)
         else:
                 print('Please check your name or config file formatting for the current file')
         

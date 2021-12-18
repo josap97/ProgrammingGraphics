@@ -10,6 +10,7 @@ import streamlit as st
 
 def makeF12017(fullArray):
         progess = st.progress(0)
+        print("Testing 2017")
         # Define user Inputs
         driverName = settings.driverName
 

@@ -59,18 +59,15 @@ if file:
                                 settings.driverName = infoArray[0]
                                 settings.driverNumber = infoArray[1]
                                 if(("F1" in st.session_state['graphicType'+str(i)]) and (config.has_option('TEAM'+infoArray[2], 'name'))):
+                                        settings.teamName = config.get('TEAM'+infoArray[2], 'name')
+                                        colourFull = (config.get('TEAM'+infoArray[2], 'colour')).split(',')
+                                        settings.teamColour = (int(colourFull[0]), int(colourFull[1]), int(colourFull[2]))
+                                        currInfo.text("Working on: #" + str(i+1) + ": " + name)
                                         if("2017" in st.session_state['graphicType'+str(i)]):
-                                                settings.teamName = config.get('TEAM'+infoArray[2], 'name')
-                                                colourFull = (config.get('TEAM'+infoArray[2], 'colour')).split(',')
-                                                settings.teamColour = (int(colourFull[0]), int(colourFull[1]), int(colourFull[2]))
-                                                currInfo.text("Working on: #" + str(i+1) + ": " + name)
-                                                #graphicsMaker.makeF12017(file[i].getvalue())
+                                                st.write("testing")
+                                                graphicsMaker.makeF12017(file[i].getvalue())
                                         elif("2008" in st.session_state['graphicType'+str(i)]):
-                                                settings.teamName = config.get('TEAM'+infoArray[2], 'name')
-                                                colourFull = (config.get('TEAM'+infoArray[2], 'colour')).split(',')
-                                                settings.teamColour = (int(colourFull[0]), int(colourFull[1]), int(colourFull[2]))
-                                                currInfo.text("Working on: #" + str(i+1) + ": " + name)
-                                                #graphicsMaker.makeF12008(file[i].getvalue())
+                                                graphicsMaker.makeF12008(file[i].getvalue())
                                 elif("GT" in st.session_state['graphicType'+str(i)]):
                                         settings.teamName = config.get('TEAM'+infoArray[2], 'name')
                                         st.write(file[i].getvalue())
@@ -78,7 +75,7 @@ if file:
                                                 result = docFormatter.readACC(file[i].getvalue())
                                         else:
                                                 result = docFormatter.readAC(file[i].getvalue())
-                                        #graphicsMaker(result.FPS,result.time,result.gear,result.throttle,result.brake,result.delta,result.steering,result.speed,result.RPM,result.maxRPM)
+                                        #graphicsMakerGT(result.FPS,result.time,result.gear,result.throttle,result.brake,result.delta,result.steering,result.speed,result.RPM,result.maxRPM)
                                                 
                                 else:
                                         st.error('Please check your name or config file formatting for the current file')
