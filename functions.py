@@ -29,3 +29,6 @@ def stProgressBar(iteration, total):
 
 def QuadraticEaseOut(t, tMax, change):
     return float(change)*((float(t)/float(tMax)-1)**3+1)
+
+def calcAngle2008(RPM):
+    return ((RPM-6000)/14000*360*0.75-90)/180

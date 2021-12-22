@@ -1,3 +1,4 @@
+from os import name
 import cv2
 import numpy as np
 from cv2 import VideoWriter, VideoWriter_fourcc
@@ -10,7 +11,6 @@ import streamlit as st
 
 def makeF12017(fullArray):
         progess = st.progress(0)
-        print("Testing 2017")
         # Define user Inputs
         driverName = settings.driverName
 
@@ -262,6 +262,171 @@ def makeF12017(fullArray):
                         img_pil.paste(sectorYellowImage, (posX, posY), sectorYellowImage)
                 elif(sectorImprovementArr[sec] == "sectorPurple"):
                         img_pil.paste(sectorPurpleImage, (posX, posY), sectorPurpleImage)
+
+        # Adding Generated Frame to the array
+        frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+        for i in range(0, int(FPS)*10):
+                video.write(frame)
+
+        cv2.destroyAllWindows()
+        video.release()
+        return "success"
+
+def makeF12008(fullArray):
+        # Define user Inputs
+        driverName = settings.driverName
+        teamName = settings.teamName
+
+        # Define Arrays
+        npFullArray = np.array(fullArray)
+        sampleRate = npFullArray[8][1]
+        lapTime = npFullArray[9][1]
+        npFullArray = npFullArray[18:,:]
+        timeArr = np.transpose(npFullArray[:,0])
+        deltaArr = np.transpose(npFullArray[:,16]).astype(np.float64)
+        brakePosArr = np.transpose(npFullArray[:,19]).astype(np.float64)
+        RPMArr = np.transpose(npFullArray[:,2*26+9]).astype(np.int64)
+        gearArr = np.transpose(npFullArray[:,2*26+12])
+        speedArr = np.transpose(npFullArray[:,2*26+13]).astype(np.float64)
+        maxSpeed = max(speedArr)
+        maxRPM = np.float64(npFullArray[2,81])
+        throttlePosArr = np.transpose(npFullArray[:,4*26+7]).astype(np.float64)
+        racePositionArr = np.transpose(npFullArray[:,90])
+        noFrames = len(timeArr)
+
+        # Define fonts
+        fontpath = "assets/fonts/FontsFree-Net-arial-bold.ttf"
+        font200 = ImageFont.truetype(fontpath, 200)
+        font150 = ImageFont.truetype(fontpath, 150)
+        font100 = ImageFont.truetype(fontpath, 100)
+        font75 = ImageFont.truetype(fontpath, 75)
+        font40 = ImageFont.truetype(fontpath, 40)
+        font25 = ImageFont.truetype(fontpath, 25)
+
+        # Define initial frame
+        background = cv2.imread("assets/bottomBar/backgroundBlue1080.png")
+        backgroundColour = (0, 0, 255)
+        height, width, layers = background.shape
+
+        # Define images
+        inputsBackground = Image.open("assets/F12008Set/inputBackground.png")
+        inputShape = cv2.imread("assets/F12008Set/inputBackground.png")
+        inputheight, inputwidth, inputlayers = inputShape.shape
+        inputFrac = 1
+        nameBoxBackground = Image.open("assets/F12008Set/nameBox/nameBoxBackground.png")
+        nbShape = cv2.imread("assets/F12008Set/nameBox/nameBoxBackground.png")
+        nbheight, nbwidth, nblayers = nbShape.shape
+        nameBoxBackground = nameBoxBackground.resize((width, round(nbheight/nbwidth*width)))
+        nbYoffset = round(height - nbheight/nbwidth*width)
+        nbWFrac = width/nbwidth
+
+        # Define video output
+        FPS = sampleRate
+        fourcc = VideoWriter_fourcc(*'MP42')
+        video = VideoWriter('./output/'+ settings.currentFileName + '.avi', fourcc, float(FPS), (width, height))
+        inputsX0 = width - inputwidth - 100
+        inputsY0 = height - inputheight - 200
+        rpmX0 = inputsX0 + round(inputFrac*182)
+        rpmY0 = inputsY0 + round(inputFrac*184)
+        rpmR = 130
+        rpmRb = 10
+
+        for i in range(0, int(FPS)):
+                frame = background
+                img_pil = Image.fromarray(frame)
+                draw = ImageDraw.Draw(img_pil)
+                draw.rectangle((0, 0, width, height), fill=backgroundColour)
+                #posX = math.trunc(width - 553 + QuadraticEaseOut(i, FPS, 353))
+                #img_pil.paste(inputsBackground, (posX, 0), inputsBackground)
+                posX = math.trunc(-width + QuadraticEaseOut(i, FPS, width))
+                img_pil.paste(nameBoxBackground, (posX, nbYoffset), nameBoxBackground)
+                draw.text((posX + round(637*nbWFrac), nbYoffset + round(160*nbWFrac)), driverName, font = font25, fill=(0, 0, 0, 0), anchor="la")
+                draw.text((posX + round(637*nbWFrac), nbYoffset +  round(275*nbWFrac)), teamName, font = font25, fill=(255, 255, 255, 0), anchor="la")
+                frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+                video.write(frame)
+                printProgressBar(i+1, len(timeArr)+float(FPS), prefix = 'Progress:', suffix = 'Complete')
+
+        for i in range(0, noFrames):
+
+                # Setup Frame
+                frame = None
+                frame = background
+                img_pil = Image.fromarray(frame)
+                draw = ImageDraw.Draw(img_pil)
+                draw.rectangle((0, 0, width, height), fill=backgroundColour)
+                img_pil.paste(nameBoxBackground, (0, nbYoffset), nameBoxBackground)
+                img_pil.paste(inputsBackground, (inputsX0, inputsY0), inputsBackground)
+                draw.text((inputsX0+182, inputsY0+462), "200", font = font25, fill=(255, 255, 255, 0), anchor="lt")
+                draw.text((inputsX0+264, inputsY0+424), str(round((round(maxSpeed/10)-20)/4)*2*10+200), font = font25, fill=(255, 255, 255, 0), anchor="lt")
+                draw.text((inputsX0+300, inputsY0+364), str(round((round(maxSpeed/10)-20)/4)*3*10+200), font = font25, fill=(255, 255, 255, 0), anchor="lt")
+                draw.text((inputsX0+305, inputsY0+309), str(round(maxSpeed/10)*10), font = font25, fill=(255, 255, 255, 0), anchor="lt")
+                theta = calcAngle2008(RPMArr[i])
+                theta2 = theta - 90/180
+                draw.polygon([(rpmX0 - rpmR*math.cos(theta), rpmY0 - rpmR*math.sin(theta)), (rpmX0 - rpmRb*math.sin(theta2), rpmY0 - rpmRb*math.cos(theta2)), (rpmX0 + rpmRb*math.sin(theta2), rpmY0 + rpmRb*math.cos(theta2))], fill=(255, 255, 255, 0))
+
+                # Speed display
+                if(speedArr[i]<200):
+                        it = round(speedArr[i]/20)
+                else:
+                        it = round((speedArr[i]-200)/(max(speedArr)-200)*9) + 10
+                speedImage = Image.open("assets/F12008Set/speed_steps/speed_" + str(it).zfill(3) + ".png")
+                img_pil.paste(speedImage, (inputsX0, inputsY0), speedImage)
+
+                # Throttle and Brake Inputs
+                if(RPMArr[i] > maxRPM * 0.92):
+                        gearColour = (255, 0, 0, 0)
+                else:
+                        gearColour = (0,0,0,0)
+                draw.rectangle((inputsX0+208, inputsY0+221, math.trunc(inputsX0+208+146*(throttlePosArr[i])/100), inputsY0+261), fill=(0, 188, 0))
+                draw.rectangle((inputsX0+208, inputsY0+261, math.trunc(inputsX0+208+146*(brakePosArr[i])/100), inputsY0+301), fill=(188, 0, 0)) # Inverted colour RGBBGR
+                draw.text((inputsX0 + 231, inputsY0 + inputFrac*(221+20)), "Throttle", font=font25, fill=(255, 255, 255, 0), anchor="lm")
+                draw.text((inputsX0 + 231, inputsY0 + inputFrac*(261+20)), "Brake", font=font25, fill=(255, 255, 255, 0), anchor="lm")
+                draw.text((inputsX0 + 299, inputsY0 + inputFrac*(184+20)), str(gearArr[i]), font=font25, fill=gearColour, anchor="lm")
+
+                # Top bar
+                img_pil.paste(nameBoxBackground, (0, nbYoffset), nameBoxBackground)
+                draw.text((637*nbWFrac, nbYoffset + round(160*nbWFrac)), driverName, font = font40, fill=(0, 0, 0, 0), anchor="la")
+
+                # Time
+                timeLarge  = formatTimeLarge(timeArr[i])
+                timeMil = str(float(timeArr[i]) - math.trunc(float(timeArr[i])))
+                #draw.text((960, 347), timeMil[1:][:3], font = font150, fill=(255,255,255,0), anchor="lb")
+                #draw.text((960, 347), timeLarge, font = font200, fill=(255,255,255,0), anchor="rb")
+                draw.text((round((637+822*0.8)*nbWFrac), nbYoffset + round(275*nbWFrac)), timeMil[1:][:3], font = font40, fill=(255, 255, 255, 0), anchor="lt")
+                draw.text((round((637+822*0.8)*nbWFrac), nbYoffset + round(275*nbWFrac)), timeLarge, font = font40, fill=(255, 255, 255, 0), anchor="rt")
+
+                # Adding Generated Frame to the array
+                frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+                video.write(frame)
+                printProgressBar(int(FPS)+i+1, len(timeArr)+float(FPS), prefix = 'Progress:', suffix = 'Complete')
+        
+        # Setting up final frames for the laptime show
+        # Setup Frame
+        frame = None
+        frame = background
+        img_pil = Image.fromarray(frame)
+        draw = ImageDraw.Draw(img_pil)
+        draw.rectangle((0, 0, width, height), fill=backgroundColour)
+        img_pil.paste(nameBoxBackground, (0, nbYoffset), nameBoxBackground)
+
+        # Top bar
+        img_pil.paste(nameBoxBackground, (0, nbYoffset), nameBoxBackground)
+        draw.text((637*nbWFrac, nbYoffset + round(160*nbWFrac)), driverName, font = font40, fill=(0, 0, 0, 0), anchor="la")
+
+        # Time
+        timeLarge  = formatTimeLarge(timeArr[i])
+        timeMil = str(float(timeArr[i]) - math.trunc(float(timeArr[i])))
+        #draw.text((960, 347), timeMil[1:][:3], font = font150, fill=(255,255,255,0), anchor="lb")
+        #draw.text((960, 347), timeLarge, font = font200, fill=(255,255,255,0), anchor="rb")
+        draw.text((round((637+822*0.8)*nbWFrac), nbYoffset + round(275*nbWFrac)), timeMil[1:][:3], font = font40, fill=(255, 255, 255, 0), anchor="lt")
+        draw.text((round((637+822*0.8)*nbWFrac), nbYoffset + round(275*nbWFrac)), timeLarge, font = font40, fill=(255, 255, 255, 0), anchor="rt")
+
+        # Calculating Time Text
+        timeLarge  = formatTimeLarge(lapTime)
+        timeMil = str(float(lapTime) - math.trunc(float(lapTime)))
+        draw.text((round((637+822*0.8)*nbWFrac), nbYoffset + round(275*nbWFrac)), timeMil[1:][:3], font = font40, fill=(255, 255, 255, 0), anchor="lt")
+        draw.text((round((637+822*0.8)*nbWFrac), nbYoffset + round(275*nbWFrac)), timeLarge, font = font40, fill=(255, 255, 255, 0), anchor="rt")
+        draw.text((round((637+822*0.1)*nbWFrac), nbYoffset + round(275*nbWFrac)), str(deltaArr[-1]), font = font40, fill=(255, 255, 255, 0), anchor="lt")
 
         # Adding Generated Frame to the array
         frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)

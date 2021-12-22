@@ -40,8 +40,8 @@ for file in range(0, len(fileNames)):
                 elif((settings.sessionSeries == "F1") and (settings.sessionYear == "2008")):
                         colourFull = (config.get('TEAM'+infoArray[3], 'colour')).split(',')
                         settings.teamColour = (int(colourFull[0]), int(colourFull[1]), int(colourFull[2]))
-                        #makeVideo()
-                        print("skip for now")
+                        fullArray = readCSV('data/' + settings.currentFileName + '.csv')
+                        graphicsMaker.makeF12008(fullArray)
                 elif(settings.sessionSeries == "GT"):
                         fullArray = readCSV('data/' + settings.currentFileName + '.csv')
                         if(settings.sessionSim == "AC"):
