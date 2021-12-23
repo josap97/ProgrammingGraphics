@@ -118,12 +118,12 @@ def readACCArr(dataArr):
         npFullArray = npFullArray[18:,:]
         result['time'] = np.transpose(npFullArray[:,0])
         result['delta'] = ""
-        result['brake'] = np.transpose(npFullArray[:,7]).astype(np.float64)
-        result['RPM'] = np.transpose(npFullArray[:,11]).astype(np.float64)
-        result['gear'] = np.transpose(npFullArray[:,8])
-        result['speed'] = np.transpose(npFullArray[:,5]).astype(np.float64)
+        result['brake'] = np.transpose(npFullArray[:,8]).astype(np.float64)
+        result['RPM'] = np.transpose(npFullArray[:,12]).astype(np.float64)
+        result['gear'] = np.transpose(npFullArray[:,9])
+        result['speed'] = np.transpose(npFullArray[:,6]).astype(np.float64)
         lastSectorArr = ""
-        result['throttle'] = np.transpose(npFullArray[:,6]).astype(np.float64)
-        result['steering'] = np.transpose(npFullArray[:,4]).astype(np.float64)
-        result['maxRPM'] = max(np.transpose(npFullArray[:,11]).astype(np.int64))
+        result['throttle'] = np.transpose(npFullArray[:,7]).astype(np.float64)
+        result['steering'] = np.transpose(npFullArray[:,5]).astype(np.float64)
+        result['maxRPM'] = max(np.transpose(npFullArray[:,12]).astype(np.int64))
         return result

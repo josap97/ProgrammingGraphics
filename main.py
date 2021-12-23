@@ -43,12 +43,14 @@ for file in range(0, len(fileNames)):
                         fullArray = readCSV('data/' + settings.currentFileName + '.csv')
                         graphicsMaker.makeF12008(fullArray)
                 elif(settings.sessionSeries == "GT"):
+                        settings.teamName = infoArray[3]
                         fullArray = readCSV('data/' + settings.currentFileName + '.csv')
                         if(settings.sessionSim == "AC"):
                                 result = docFormatter.readACArr(fullArray)
-                        elif(settings.sessionSim == "AC"):
+                        elif(settings.sessionSim == "ACC"):
                                 result = docFormatter.readACCArr(fullArray)
-                        graphicsMaker.makeGT(result.FPS,result.time,result.gear,result.throttle,result.brake,result.delta,result.steering,result.speed,result.RPM,result.maxRPM)
+                        #print(result)
+                        graphicsMaker.makeGT(result["FPS"],result["time"],result["gear"],result["throttle"],result["brake"],result["delta"],result["steering"],result["speed"],result["RPM"],result["maxRPM"])
         else:
                 print('Please check your name or config file formatting for the current file')
         

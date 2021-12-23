@@ -23,8 +23,8 @@ The script uses MOTEC data to create graphics but, for some reason, you cannot j
 2. Open the exported CSV in excel and `Save as...`  a `.csv` file without making any changes to the `/data/` folder with the following name `(sim,name,number,team,year,series) info.csv` where:
     a. `sim` is the sim from which the data is gathered. Currently options are `AC,ACC`
     b. `name` is the driver name using normal latin characters
-    b. `number` is the number of the driver in the file, limited to max 3 numbers
-    d. `team` is the team name the driver drives for. You can add teams by adding to the `assets/config.ini` file. By default you can choose for the following:
+    c. `number` is the number of the driver in the file, limited to max 3 numbers
+    d1. `team` is the team name the driver drives for in `F2`. You can add teams by adding to the `assets/config.ini` file. By default you can choose for the following:
         * ferrari
         * forceIndia
         * haas
@@ -39,6 +39,7 @@ The script uses MOTEC data to create graphics but, for some reason, you cannot j
         * alphaTauri
         * astonMartin
         * alfaRomeo
+    d2. `team` for `GT` is the car brand. A file must be placed in `assets/brands` with the corresponding brand name. This is not case sensitive but punctuation and thus spacing is important! The most common brands are included (Mercedes, Aston Martin, Porsche, BMW, Ferrari etc.)
     e. `year` rough year to create the overlay style from, primarily used for F1 style with options `2008,2017`
     f. `series` series to determine the overlay style. Options are: `F1,GT`
     g. `info` is a container for any information you want to add to the file name, the script does not look at this so if free to fill in as you please

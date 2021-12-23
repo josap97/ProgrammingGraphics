@@ -1,6 +1,7 @@
 import math
 from typing import ChainMap
 from numpy import floor, trunc
+import os
 
 # Print iterations progress
 def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 2, length = 100, fill = '█', printEnd = "\r"):
@@ -30,5 +31,14 @@ def stProgressBar(iteration, total):
 def QuadraticEaseOut(t, tMax, change):
     return float(change)*((float(t)/float(tMax)-1)**3+1)
 
+def QuadraticEaseOutInv(t, tMax, change):
+    return float(change) - float(change)*((float(t)/float(tMax)-1)**3+1)
+
 def calcAngle2008(RPM):
     return ((RPM-6000)/14000*360*0.75-90)/180
+
+def getBrandImg(brandString):
+    files = os.listdir("assets/brands")
+    for f in files:
+        if(brandString.lower() in f):
+            return f
