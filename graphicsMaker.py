@@ -7,10 +7,8 @@ from docFormatter import *
 from format import *
 from functions import *
 import settings
-import streamlit as st
 
 def makeF12017(fullArray):
-        progess = st.progress(0)
         # Define user Inputs
         driverName = settings.driverName
 
@@ -101,7 +99,7 @@ def makeF12017(fullArray):
                 draw.rectangle((posX + 480, 17, posX + 493, 112), fill=teamColour)
                 frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
                 video.write(frame)
-                progess.progess(stProgressBar(i+1, len(timeArr)+2*float(FPS)))
+                printProgressBar(i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete')
 
         for i in range(0, int(FPS)):
                 frame = background
@@ -122,7 +120,7 @@ def makeF12017(fullArray):
                         img_pil.paste(trackMapImage, (0, 0), trackMapImage)
                 frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
                 video.write(frame)
-                progess.progess(stProgressBar(int(FPS)+i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete'))
+                printProgressBar(int(FPS)+i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete')
 
         for i in range(0, noFrames):
 
@@ -218,7 +216,7 @@ def makeF12017(fullArray):
                 # Adding Generated Frame to the array
                 frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
                 video.write(frame)
-                progess.progess(stProgressBar(2*int(FPS)+i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete'))
+                printProgressBar(2*int(FPS)+i+1, len(timeArr)+2*float(FPS), prefix = 'Progress:', suffix = 'Complete')
         
         # Setting up final frames for the laptime show
         # Setup Frame
@@ -451,19 +449,21 @@ def makeGT(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,s
         topBar = Image.open("assets/GTBar/GTBarMain.png")
         barInputs = Image.open("assets/GTBar/GTBarInputs.png")
         gradientImg = Image.open("assets/GTBar/GTBarGradient.png")
-        gradientCV2 = cv2.imread("assets/GTBar/GTBarGradient.png")
         gradientX0 = 2586
         gradientWidth = 580
-        gradientCV2h, gradientCV2w, gradientCV2l = gradientCV2.shape
 
         brandPath = "assets/brands/" + getBrandImg(settings.teamName)
         brandcv2 = cv2.imread(brandPath)
         brandImg = Image.open(brandPath)
         brandh, brandw, brandl = brandcv2.shape
         if(brandw < brandh):
-                brandImage = brandImg.resize((173, round(brandh/brandw*173)))
+                brandImgw = 173
+                brandImgh = round(brandh/brandw*173)
+                brandImage = brandImg.resize((brandImgw, brandImgh))
         else:
-                brandImage = brandImg.resize((round(brandh/brandw*127), 127))
+                brandImgw = round(brandh/brandw*127)
+                brandImgh = 127
+                brandImage = brandImg.resize((brandImgw, brandImgh))
 
         # Define video output
         fourcc = VideoWriter_fourcc(*'MP42')
@@ -476,7 +476,7 @@ def makeGT(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,s
                 draw.rectangle((0, 0, width, height), fill=backgroundColour)
                 posX = math.trunc(-width + QuadraticEaseOut(i, frameRate, width))
                 img_pil.paste(topBar, (posX, 0), topBar)
-                img_pil.paste(brandImage, (posX + 1396, 564 - round(brandh/brandw*173/2)), brandImage)
+                img_pil.paste(brandImage, (posX + 1396 + round((170-brandImgw)/2), 500 + round((128-brandImgh)/2)), brandImage)
                 draw.text((posX+1594, 580), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
                 draw.text((posX+2521+112, 580), str(settings.driverNumber), font = font100, fill=(0, 0, 0, 0), anchor="mm")
                 frame = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
@@ -492,7 +492,7 @@ def makeGT(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,s
                 inputBar = barInputs.crop((0, 0, width, 266 + round(QuadraticEaseOut(i, int(0.5*frameRate), 235))))
                 img_pil.paste(inputBar, (-97 + round(QuadraticEaseOut(i, int(0.5*frameRate), 97)), 235 - round(QuadraticEaseOut(i, int(0.5*frameRate), 235))), inputBar)
                 img_pil.paste(topBar, (0, 0), topBar)
-                img_pil.paste(brandImage, (1396, 564 - round(brandh/brandw*173/2)), brandImage)
+                img_pil.paste(brandImage, (1396 + round((170-brandImgw)/2), 500 + round((128-brandImgh)/2)), brandImage)
                 draw.text((1594, 580), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
                 draw.text((2521+112, 580), str(settings.driverNumber), font = font100, fill=(0, 0, 0, 0), anchor="mm")
 
@@ -512,7 +512,7 @@ def makeGT(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,s
                 img_pil.paste(gradientImgCurr, (0, 0), gradientImgCurr)
                 img_pil.paste(barInputs, (0, 0), barInputs)
                 img_pil.paste(topBar, (0, 0), topBar)
-                img_pil.paste(brandImage, (1396, 564 - round(brandh/brandw*173/2)), brandImage)
+                img_pil.paste(brandImage, (1396 + round((170-brandImgw)/2), 500 + round((128-brandImgh)/2)), brandImage)
 
                 draw.text((1594, 580), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
                 draw.text((2521+112, 580), str(settings.driverNumber), font = font100, fill=(0, 0, 0, 0), anchor="mm")
@@ -542,7 +542,7 @@ def makeGT(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,s
 
                 img_pil.paste(topBar, (0, 0), topBar)
                 img_pil.paste(barInputs, (0, 0), barInputs)
-                img_pil.paste(brandImage, (1396, 564 - round(brandh/brandw*173/2)), brandImage)
+                img_pil.paste(brandImage, (1396 + round((170-brandImgw)/2), 500 + round((128-brandImgh)/2)), brandImage)
 
                 # Calculating Time Text
                 timeLarge  = formatTimeLarge(timeArr[i])
@@ -582,7 +582,7 @@ def makeGT(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,s
                 img_pil.paste(gradientImgCurr, (0, 0), gradientImgCurr)
                 img_pil.paste(barInputs, (0, 0), barInputs)
                 img_pil.paste(topBar, (0, 0), topBar)
-                img_pil.paste(brandImage, (1396, 564 - round(brandh/brandw*173/2)), brandImage)
+                img_pil.paste(brandImage, (1396 + round((170-brandImgw)/2), 500 + round((128-brandImgh)/2)), brandImage)
 
                 draw.text((1594, 580), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
                 draw.text((2521+112, 580), str(settings.driverNumber), font = font100, fill=(0, 0, 0, 0), anchor="mm")
@@ -610,7 +610,7 @@ def makeGT(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,s
                 inputBar = barInputs.crop((0, 0, width, 266 + round(QuadraticEaseOutInv(i, int(0.5*frameRate), 235))))
                 img_pil.paste(inputBar, (-97 + round(QuadraticEaseOutInv(i, int(0.5*frameRate), 97)), 235 - round(QuadraticEaseOutInv(i, int(0.5*frameRate), 235))), inputBar)
                 img_pil.paste(topBar, (0, 0), topBar)
-                img_pil.paste(brandImage, (1396, 564 - round(brandh/brandw*173/2)), brandImage)
+                img_pil.paste(brandImage, (1396 + round((170-brandImgw)/2), 500 + round((128-brandImgh)/2)), brandImage)
                 draw.text((1594, 580), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
                 draw.text((2521+112, 580), str(settings.driverNumber), font = font100, fill=(0, 0, 0, 0), anchor="mm")
                 timeLarge  = formatTimeLarge(timeArr[-1])
@@ -627,7 +627,7 @@ def makeGT(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,s
         draw = ImageDraw.Draw(img_pil)
         draw.rectangle((0, 0, width, height), fill=backgroundColour)
         img_pil.paste(topBar, (0, 0), topBar)
-        img_pil.paste(brandImage, (1396, 564 - round(brandh/brandw*173/2)), brandImage)
+        img_pil.paste(brandImage, (1396 + round((170-brandImgw)/2), 500 + round((128-brandImgh)/2)), brandImage)
         draw.text((1594, 580), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
         draw.text((2521+112, 580), str(settings.driverNumber), font = font100, fill=(0, 0, 0, 0), anchor="mm")
         timeLarge  = formatTimeLarge(timeArr[-1])
@@ -639,5 +639,52 @@ def makeGT(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,s
 
         for i in range(0, int(frameRate*10)):
                 video.write(frame)
+
+        return "success"
+
+def makeEndurance(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,speedArr,RPMArr,MaxRPM):
+        # Define user Inputs
+        driverName = settings.driverName
+        frameRate = float(frameRate)
+
+        # Define fonts
+        fontpath = "assets/fonts/GT-Regular.otf"
+        font200 = ImageFont.truetype(fontpath, 200)
+        font150 = ImageFont.truetype(fontpath, 150)
+        font100 = ImageFont.truetype(fontpath, 100)
+        font75 = ImageFont.truetype(fontpath, 75)
+        font50 = ImageFont.truetype(fontpath, 50)
+        font25 = ImageFont.truetype(fontpath, 25)
+
+        # Define initial frame
+        #background = cv2.imread("assets/GTBar/baseLayerBlue.png")
+        height = 2160
+        width = 3840
+        backgroundColour = (0, 0, 255)
+        background = Image.new('RGBA', (width, height))
+        bgDraw = ImageDraw.Draw(background)
+        bgDraw.rectangle((0, 0, width, height), fill=backgroundColour)
+        #height, width, layers = background.shape
+
+        topBar = Image.open("assets/GTBar/baseLayerBlue.png")
+
+        # Define video output
+        fourcc = VideoWriter_fourcc(*'MP42')
+        video = VideoWriter('./output/'+ settings.currentFileName + '.avi', fourcc, float(frameRate), (width, height))
+
+        for i in range(0, int(frameRate)):
+                frame = background
+                #img_pil = Image.fromarray(frame)
+                img_pil = Image.new('RGBA', (width, height))
+                draw = ImageDraw.Draw(img_pil)
+                #posX = math.trunc(-width + QuadraticEaseOut(i, frameRate, width))
+                posX = 0
+                draw.text((posX+1594, 580), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
+                draw.text((posX+2521+112, 580), str(settings.driverNumber), font = font100, fill=(0, 0, 0, 0), anchor="mm")
+                imgBlurred = drawWithBlur(img_pil)
+                frame.paste(imgBlurred, imgBlurred)
+                frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
+                video.write(frame)
+                printProgressBar(i+1, len(timeArr)+3*float(frameRate), prefix = 'Progress:', suffix = 'Complete')
 
         return "success"

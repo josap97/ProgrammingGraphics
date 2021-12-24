@@ -2,6 +2,7 @@ import math
 from typing import ChainMap
 from numpy import floor, trunc
 import os
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageChops
 
 # Print iterations progress
 def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 2, length = 100, fill = '█', printEnd = "\r"):
@@ -33,6 +34,15 @@ def QuadraticEaseOut(t, tMax, change):
 
 def QuadraticEaseOutInv(t, tMax, change):
     return float(change) - float(change)*((float(t)/float(tMax)-1)**3+1)
+
+def drawWithBlur(image):
+    bg = Image.new('RGBA', image.size)
+    blur = image.filter(ImageFilter.BoxBlur(10))
+
+    bg.paste(blur,blur)
+    bg.paste(image,image)
+
+    return bg
 
 def calcAngle2008(RPM):
     return ((RPM-6000)/14000*360*0.75-90)/180

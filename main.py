@@ -51,6 +51,15 @@ for file in range(0, len(fileNames)):
                                 result = docFormatter.readACCArr(fullArray)
                         #print(result)
                         graphicsMaker.makeGT(result["FPS"],result["time"],result["gear"],result["throttle"],result["brake"],result["delta"],result["steering"],result["speed"],result["RPM"],result["maxRPM"])
+                elif(settings.sessionSeries == "Endu"):
+                        settings.teamName = infoArray[3]
+                        fullArray = readCSV('data/' + settings.currentFileName + '.csv')
+                        if(settings.sessionSim == "AC"):
+                                result = docFormatter.readACArr(fullArray)
+                        elif(settings.sessionSim == "ACC"):
+                                result = docFormatter.readACCArr(fullArray)
+                        #print(result)
+                        graphicsMaker.makeEndurance(result["FPS"],result["time"],result["gear"],result["throttle"],result["brake"],result["delta"],result["steering"],result["speed"],result["RPM"],result["maxRPM"])
         else:
                 print('Please check your name or config file formatting for the current file')
         
