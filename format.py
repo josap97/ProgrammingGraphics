@@ -49,7 +49,7 @@ def getTyreName(tyreString):
                         image = "hard.png"
                 else:
                         image = "soft 2019.png"
-        return "assets/tyres/" + image
+        return "assets/F12017Set/tyres/" + image
 
 trackMapSize = 400
 def generateTrackMap(carPosX, carPosY, backgroundColour, frameH, frameW):

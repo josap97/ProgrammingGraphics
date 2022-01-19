@@ -3,6 +3,7 @@ from typing import ChainMap
 from numpy import floor, trunc
 import os
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageChops
+import settings
 
 # Print iterations progress
 def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 2, length = 100, fill = '█', printEnd = "\r"):
@@ -36,13 +37,17 @@ def QuadraticEaseOutInv(t, tMax, change):
     return float(change) - float(change)*((float(t)/float(tMax)-1)**3+1)
 
 def drawWithBlur(image):
-    bg = Image.new('RGBA', image.size)
-    blur = image.filter(ImageFilter.BoxBlur(10))
+    if(settings.enableEnduranceBlur):
+        bg = Image.new('RGBA', image.size)
+        blur = image.filter(ImageFilter.BoxBlur(50))
+        #blur = image.filter(ImageFilter.GaussianBlur(radius=50))
 
-    bg.paste(blur,blur)
-    bg.paste(image,image)
+        bg.paste(blur,blur)
+        bg.paste(image,image)
 
-    return bg
+        return bg
+    else:
+        return image
 
 def calcAngle2008(RPM):
     return ((RPM-6000)/14000*360*0.75-90)/180
@@ -52,3 +57,19 @@ def getBrandImg(brandString):
     for f in files:
         if(brandString.lower() in f):
             return f
+
+def getCarClass(classString):
+    classList = ['LMP1','LMH','DPi','LMP2','LMP3','GTEPro','GTEAM','GTLM','GTD','GTP']
+    classColours = [(266,33,28),(266,33,28),(35,31,32),(49,96,150),(253,103,26),(0,149,59),(252,79,0),(208,51,58),(1,174,66),(208,51,58)]
+
+    result = dict()
+
+    for i in range(0, len(classList)):
+        if(classList[i].lower() in classString.lower()):
+            result["name"] = classList[i]
+            result["colour"] = classColours[i]
+    return result
+
+def getEnduranceAngle(currPosition):
+    #print("pos: " +str(currPosition) + " angle: " + str(-1*(currPosition-50)/50*33))
+    return -1*(currPosition-50)/50*33

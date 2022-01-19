@@ -58,21 +58,21 @@ def makeF12017(fullArray):
         font25 = ImageFont.truetype(fontpath, 25)
 
         # Define initial frame
-        background = cv2.imread("assets/bottomBar/backgroundBlue.png")
+        background = cv2.imread("assets/F12017Set/bottomBar/backgroundBlue.png")
         backgroundColour = (0, 0, 255)
         height, width, layers = background.shape
 
         # Define images
-        steeringWheel = Image.open("assets/icons/steeringWheel.png")
-        DRSNo = Image.open("assets/icons/DRSNo.png")
-        DRSAvail = Image.open("assets/icons/DRSAvail.png")
-        DRSActive = Image.open("assets/icons/DRSActive.png")
-        sectorGreenImage = Image.open("assets/bottomBar/sectorGreen.png")
-        sectorYellowImage = Image.open("assets/bottomBar/sectorYellow.png")
-        sectorPurpleImage = Image.open("assets/bottomBar/sectorPurple.png")
-        topBar = Image.open("assets/bottomBar/topBar.png")
-        bottomBar = Image.open("assets/bottomBar/bottomBar.png")
-        barInputs = Image.open("assets/bottomBar/barInputs.png")
+        steeringWheel = Image.open("assets/F12017Set/icons/steeringWheel.png")
+        DRSNo = Image.open("assets/F12017Set/icons/DRSNo.png")
+        DRSAvail = Image.open("assets/F12017Set/icons/DRSAvail.png")
+        DRSActive = Image.open("assets/F12017Set/icons/DRSActive.png")
+        sectorGreenImage = Image.open("assets/F12017Set/bottomBar/sectorGreen.png")
+        sectorYellowImage = Image.open("assets/F12017Set/bottomBar/sectorYellow.png")
+        sectorPurpleImage = Image.open("assets/F12017Set/bottomBar/sectorPurple.png")
+        topBar = Image.open("assets/F12017Set/bottomBar/topBar.png")
+        bottomBar = Image.open("assets/F12017Set/bottomBar/bottomBar.png")
+        barInputs = Image.open("assets/F12017Set/bottomBar/barInputs.png")
         tyreImage = Image.open(tire)
         tyreImage = tyreImage.resize((125, 125))
         teamColour = settings.teamColour
@@ -302,7 +302,7 @@ def makeF12008(fullArray):
         font25 = ImageFont.truetype(fontpath, 25)
 
         # Define initial frame
-        background = cv2.imread("assets/bottomBar/backgroundBlue1080.png")
+        background = cv2.imread("assets/F12017Set/bottomBar/backgroundBlue1080.png")
         backgroundColour = (0, 0, 255)
         height, width, layers = background.shape
 
@@ -642,49 +642,238 @@ def makeGT(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,s
 
         return "success"
 
-def makeEndurance(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,speedArr,RPMArr,MaxRPM):
+def makeEndurance(frameRate,timeArr,gearArr,throttleArr,brakeArr,deltaArr,steeringArr,speedArr,RPMArr,MaxRPM,airTemp,trackTemp):
         # Define user Inputs
         driverName = settings.driverName
         frameRate = float(frameRate)
+        classInfo = getCarClass(settings.sessionYear)
 
         # Define fonts
-        fontpath = "assets/fonts/GT-Regular.otf"
+        fontpath = "assets/fonts/BebasNeue-Regular.ttf"
         font200 = ImageFont.truetype(fontpath, 200)
         font150 = ImageFont.truetype(fontpath, 150)
         font100 = ImageFont.truetype(fontpath, 100)
         font75 = ImageFont.truetype(fontpath, 75)
-        font50 = ImageFont.truetype(fontpath, 50)
-        font25 = ImageFont.truetype(fontpath, 25)
+        font80 = ImageFont.truetype(fontpath, 80)
+        font60 = ImageFont.truetype(fontpath, 60)
 
         # Define initial frame
-        #background = cv2.imread("assets/GTBar/baseLayerBlue.png")
         height = 2160
         width = 3840
         backgroundColour = (0, 0, 255)
+        textForegroundColour = (226, 240, 252)
         background = Image.new('RGBA', (width, height))
         bgDraw = ImageDraw.Draw(background)
         bgDraw.rectangle((0, 0, width, height), fill=backgroundColour)
-        #height, width, layers = background.shape
 
-        topBar = Image.open("assets/GTBar/baseLayerBlue.png")
+        # Define Colours and Arcs
+        #textForegroundColour = (226, 240, 252)
+        textForegroundColour = (255,255,255)
+        brakeBarColour = (210,53,84)
+        throttleBarColour = (101,247,138)
+        bracketEnd = 33.1
+        bracketRadius = 1055
+
+        # Define Icons
+        iconAirTemp = Image.open("assets/endurance/icons/airTempNoBlur.png")
+        iconAirTemp = iconAirTemp.resize((102,102))
+        iconTrackTemp = Image.open("assets/endurance/icons/trackTempNoBlur.png")
+        iconTrackTemp = iconTrackTemp.resize((102,102))
 
         # Define video output
         fourcc = VideoWriter_fourcc(*'MP42')
         video = VideoWriter('./output/'+ settings.currentFileName + '.avi', fourcc, float(frameRate), (width, height))
 
         for i in range(0, int(frameRate)):
-                frame = background
-                #img_pil = Image.fromarray(frame)
+                frame = Image.new('RGBA', (width, height))
+                frDraw = ImageDraw.Draw(frame)
+                frDraw.rectangle((0, 0, width, height), fill=backgroundColour)
                 img_pil = Image.new('RGBA', (width, height))
                 draw = ImageDraw.Draw(img_pil)
-                #posX = math.trunc(-width + QuadraticEaseOut(i, frameRate, width))
-                posX = 0
-                draw.text((posX+1594, 580), driverName, font = font100, fill=(255, 255, 255, 0), anchor="lm")
-                draw.text((posX+2521+112, 580), str(settings.driverNumber), font = font100, fill=(0, 0, 0, 0), anchor="mm")
+                posX = math.trunc(-width + QuadraticEaseOut(i, frameRate, width))
+                draw.text((posX+372, 1840+26), driverName, font = font75, fill=textForegroundColour, anchor="lm")
+                draw.text((posX+382, 1764+26), str(settings.driverNumber), font = font80, fill=textForegroundColour, anchor="lm")
+                draw.rectangle((posX + 352, 1758, posX + 367, 1818), fill=classInfo["colour"])
+                draw.rectangle((posX + 332, 1914, posX + 332 + 850, 1919), fill=textForegroundColour)
+                draw.text((posX+506, 1764+26), settings.teamName, font = font75, fill=textForegroundColour, anchor="lm")
+
                 imgBlurred = drawWithBlur(img_pil)
                 frame.paste(imgBlurred, imgBlurred)
                 frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
                 video.write(frame)
-                printProgressBar(i+1, len(timeArr)+3*float(frameRate), prefix = 'Progress:', suffix = 'Complete')
+                del frame, img_pil, draw, imgBlurred
+                printProgressBar(i+1, len(timeArr)+2.5*float(frameRate), prefix = 'Progress:', suffix = 'Complete')
+        
+        for i in range(int(0.5*frameRate)):
+                frame = Image.new('RGBA', (width, height))
+                frDraw = ImageDraw.Draw(frame)
+                frDraw.rectangle((0, 0, width, height), fill=backgroundColour)
+                img_pil = Image.new('RGBA', (width, height))
+                draw = ImageDraw.Draw(img_pil)
+                posX = math.trunc(-width + QuadraticEaseOut(i, frameRate, width))
+                draw.text((372, 1840+26), driverName, font = font75, fill=textForegroundColour, anchor="lm")
+                draw.text((382, 1764+26), str(settings.driverNumber), font = font80, fill=textForegroundColour, anchor="lm")
+                draw.rectangle((352, 1758, 367, 1818), fill=classInfo["colour"])
+                draw.rectangle((332, 1914, 332 + 850, 1919), fill=textForegroundColour)
+                draw.text((506, 1764+26), settings.teamName, font = font75, fill=textForegroundColour, anchor="lm")
+
+                bracketBuildEnd = QuadraticEaseOutInv(i, 0.5*frameRate, 64)
+                draw.arc((1480-5, -62-5, 1480+2*bracketRadius, -62+2*bracketRadius), start=-33+bracketBuildEnd, end=bracketEnd, width=10, fill=textForegroundColour)
+                p1 = (2537+bracketRadius*np.cos(bracketEnd/180*np.pi), 995+bracketRadius*np.sin(bracketEnd/180*np.pi))
+                p2 = (2537+(bracketRadius-QuadraticEaseOut(i, 0.5*frameRate,160))*np.cos(bracketEnd/180*np.pi), 995+(bracketRadius-QuadraticEaseOut(i, 0.5*frameRate,160))*np.sin(bracketEnd/180*np.pi))
+                draw.line((p1,p2), fill=textForegroundColour, width=10)
+
+                imgBlurred = drawWithBlur(img_pil)
+                frame.paste(imgBlurred, imgBlurred)
+                frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
+                video.write(frame)
+                del frame, img_pil, draw, imgBlurred
+                printProgressBar(int(frameRate)+i+1, len(timeArr)+2.5*float(frameRate), prefix = 'Progress:', suffix = 'Complete')
+        
+        for i in range(int(0.5*frameRate)):
+                frame = Image.new('RGBA', (width, height))
+                frDraw = ImageDraw.Draw(frame)
+                frDraw.rectangle((0, 0, width, height), fill=backgroundColour)
+                img_pil = Image.new('RGBA', (width, height))
+                draw = ImageDraw.Draw(img_pil)
+                posX = math.trunc(-width + QuadraticEaseOut(i, frameRate, width))
+                draw.text((372, 1840+26), driverName, font = font75, fill=textForegroundColour, anchor="lm")
+                draw.text((382, 1764+26), str(settings.driverNumber), font = font80, fill=textForegroundColour, anchor="lm")
+                draw.rectangle((352, 1758, 367, 1818), fill=classInfo["colour"])
+                draw.rectangle((332, 1914, 332 + 850, 1919), fill=textForegroundColour)
+                draw.text((506, 1764+26), settings.teamName, font = font75, fill=textForegroundColour, anchor="lm")
+
+                # updateBox
+                posX = int(QuadraticEaseOutInv(i, 0.5*frameRate, 965))
+                draw.rectangle((posX + 3200, 148, posX + 3200 + 500, 148 + 5), fill=textForegroundColour)
+                img_pil.paste(iconAirTemp, (posX + 3198, 46), iconAirTemp)
+                img_pil.paste(iconTrackTemp, (posX + 3435, 46), iconTrackTemp)
+                draw.text((posX + 3310, 138), str(airTemp[0]) + "C", font=font75, fill=textForegroundColour, anchor="lb")
+                draw.text((posX + 3547, 138), str(trackTemp[0]) + "C", font=font75, fill=textForegroundColour, anchor="lb")
+
+                draw.arc((1588-25, 46-25, 1588+1908, 46+1908), start=getEnduranceAngle(QuadraticEaseOut(i, 0.5*frameRate, brakeArr[0])), end=33, width=50, fill=brakeBarColour)
+                draw.arc((1521-25, -21-25, 1521+2042, -21+2042), start=getEnduranceAngle(QuadraticEaseOut(i, 0.5*frameRate, throttleArr[0])), end=33, width=50, fill=throttleBarColour)
+                draw.arc((3016-5, 993-5, 3016+150, 993+150), start=0, end=QuadraticEaseOut(i, 0.5*frameRate, (RPMArr[0]/MaxRPM)*360), width=20, fill=textForegroundColour)
+                draw.text((3016+75, 993+75), str(int(QuadraticEaseOut(i, 0.5*frameRate, gearArr[0]))), font = font100, fill=textForegroundColour, anchor="mm")
+
+                draw.arc((1480-5, -62-5, 1480+2*bracketRadius, -62+2*bracketRadius), start=-33, end=bracketEnd, width=10, fill=textForegroundColour)
+                p1 = (2537+bracketRadius*np.cos(bracketEnd/180*np.pi), 995+bracketRadius*np.sin(bracketEnd/180*np.pi))
+                p2 = (2537+(bracketRadius-160)*np.cos(bracketEnd/180*np.pi), 995+(bracketRadius-160)*np.sin(bracketEnd/180*np.pi))
+                draw.line((p1,p2), fill=textForegroundColour, width=10)
+
+                imgBlurred = drawWithBlur(img_pil)
+                frame.paste(imgBlurred, imgBlurred)
+                frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
+                video.write(frame)
+                del frame, img_pil, draw, imgBlurred
+                printProgressBar(1.5*int(frameRate)+i+1, len(timeArr)+2.5*float(frameRate), prefix = 'Progress:', suffix = 'Complete')
+
+        for i in range(len(timeArr)):
+                frame = Image.new('RGBA', (width, height))
+                frDraw = ImageDraw.Draw(frame)
+                frDraw.rectangle((0, 0, width, height), fill=backgroundColour)
+                img_pil = Image.new('RGBA', (width, height))
+                draw = ImageDraw.Draw(img_pil)
+                draw.text((372, 1840+26), driverName, font = font75, fill=textForegroundColour, anchor="lm")
+                draw.text((382, 1764+26), str(settings.driverNumber), font = font80, fill=textForegroundColour, anchor="lm")
+                draw.rectangle((352, 1758, 367, 1818), fill=classInfo["colour"])
+                draw.rectangle((332, 1914, 332 + 850, 1919), fill=textForegroundColour)
+                draw.text((506, 1764+26), settings.teamName, font = font75, fill=textForegroundColour, anchor="lm")
+
+                if((i/frameRate)<5):
+                        # updateBox
+                        posX = 0
+                        draw.rectangle((posX + 3200, 148, posX + 3200 + 500, 148 + 5), fill=textForegroundColour)
+                        img_pil.paste(iconAirTemp, (posX + 3198, 46), iconAirTemp)
+                        img_pil.paste(iconTrackTemp, (posX + 3435, 46), iconTrackTemp)
+                        draw.text((posX + 3310, 138), str(airTemp[0]) + "C", font=font75, fill=textForegroundColour, anchor="lb")
+                        draw.text((posX + 3547, 138), str(trackTemp[0]) + "C", font=font75, fill=textForegroundColour, anchor="lb")
+
+                # Calculating Time Text
+                timeLarge  = formatTimeLarge(timeArr[i])
+                timeMil = str(float(timeArr[i]) - math.trunc(float(timeArr[i])))
+                draw.text((332+170*0.6, 2000), timeMil[1:][:3], font = font80, fill=textForegroundColour, anchor="lb")
+                draw.text((332+170*0.6, 2000), timeLarge, font = font80, fill=textForegroundColour, anchor="rb")
+
+                draw.arc((1588-25, 46-25, 1588+1908, 46+1908), start=getEnduranceAngle(brakeArr[i]), end=33, width=50, fill=brakeBarColour)
+                draw.arc((1521-25, -21-25, 1521+2042, -21+2042), start=getEnduranceAngle(throttleArr[i]), end=33, width=50, fill=throttleBarColour)
+                gearFrac = RPMArr[i]/MaxRPM
+                if gearFrac > 0.92:
+                        draw.arc((3016-5, 993-5, 3016+150, 993+150), start=0, end=gearFrac*360, width=20, fill=brakeBarColour)
+                else:
+                        draw.arc((3016-5, 993-5, 3016+150, 993+150), start=0, end=gearFrac*360, width=20, fill=textForegroundColour)
+                draw.text((3016+75, 993+75), str(gearArr[i]), font = font100, fill=textForegroundColour, anchor="mm")
+
+                draw.arc((1480-5, -62-5, 1480+2*bracketRadius, -62+2*bracketRadius), start=-33, end=bracketEnd, width=10, fill=textForegroundColour)
+                p1 = (2537+bracketRadius*np.cos(bracketEnd/180*np.pi), 995+bracketRadius*np.sin(bracketEnd/180*np.pi))
+                p2 = (2537+(bracketRadius-160)*np.cos(bracketEnd/180*np.pi), 995+(bracketRadius-160)*np.sin(bracketEnd/180*np.pi))
+                draw.line((p1,p2), fill=textForegroundColour, width=10)
+
+                imgBlurred = drawWithBlur(img_pil)
+                frame.paste(imgBlurred, imgBlurred)
+                frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
+                video.write(frame)
+                del frame, img_pil, draw, imgBlurred
+                printProgressBar(1.5*int(frameRate)+i+1, len(timeArr)+2.5*float(frameRate), prefix = 'Progress:', suffix = 'Complete')
+
+        for i in range(int(0.5*frameRate)):
+                frame = Image.new('RGBA', (width, height))
+                frDraw = ImageDraw.Draw(frame)
+                frDraw.rectangle((0, 0, width, height), fill=backgroundColour)
+                img_pil = Image.new('RGBA', (width, height))
+                draw = ImageDraw.Draw(img_pil)
+                draw.text((372, 1840+26), driverName, font = font75, fill=textForegroundColour, anchor="lm")
+                draw.text((382, 1764+26), str(settings.driverNumber), font = font80, fill=textForegroundColour, anchor="lm")
+                draw.rectangle((352, 1758, 367, 1818), fill=classInfo["colour"])
+                draw.rectangle((332, 1914, 332 + 850, 1919), fill=textForegroundColour)
+                draw.text((506, 1764+26), settings.teamName, font = font75, fill=textForegroundColour, anchor="lm")
+
+                draw.arc((1588-25, 46-25, 1588+1908, 46+1908), start=getEnduranceAngle(QuadraticEaseOutInv(i, 0.5*frameRate, brakeArr[-1])), end=33, width=50, fill=brakeBarColour)
+                draw.arc((1521-25, -21-25, 1521+2042, -21+2042), start=getEnduranceAngle(QuadraticEaseOutInv(i, 0.5*frameRate, throttleArr[-1])), end=33, width=50, fill=throttleBarColour)
+                draw.arc((3016-5, 993-5, 3016+150, 993+150), start=0, end=QuadraticEaseOutInv(i, 0.5*frameRate, (RPMArr[-1]/MaxRPM)*360), width=20, fill=textForegroundColour)
+                draw.text((3016+75, 993+75), str(int(QuadraticEaseOutInv(i, 0.5*frameRate, gearArr[-1]))), font = font100, fill=textForegroundColour, anchor="mm")
+
+                bracketBuildEnd = QuadraticEaseOut(i, 0.5*frameRate, 64)
+                draw.arc((1480-5, -62-5, 1480+2*bracketRadius, -62+2*bracketRadius), start=-33+bracketBuildEnd, end=bracketEnd, width=10, fill=textForegroundColour)
+                p1 = (2537+bracketRadius*np.cos(bracketEnd/180*np.pi), 995+bracketRadius*np.sin(bracketEnd/180*np.pi))
+                p2 = (2537+(bracketRadius-QuadraticEaseOutInv(i, 0.5*frameRate,160))*np.cos(bracketEnd/180*np.pi), 995+(bracketRadius-QuadraticEaseOutInv(i, 0.5*frameRate,160))*np.sin(bracketEnd/180*np.pi))
+                draw.line((p1,p2), fill=textForegroundColour, width=10)
+                
+                # Calculating Time Text
+                timeLarge  = formatTimeLarge(timeArr[-1])
+                timeMil = str(float(timeArr[-1]) - math.trunc(float(timeArr[-1])))
+                draw.text((332+170*0.6, 2000), timeMil[1:][:3], font = font80, fill=textForegroundColour, anchor="lb")
+                draw.text((332+170*0.6, 2000), timeLarge, font = font80, fill=textForegroundColour, anchor="rb")
+
+                imgBlurred = drawWithBlur(img_pil)
+                frame.paste(imgBlurred, imgBlurred)
+                frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
+                video.write(frame)
+                del frame, img_pil, draw, imgBlurred
+                printProgressBar(len(timeArr) + 2*int(frameRate)+i+1, len(timeArr)+2.5*float(frameRate), prefix = 'Progress:', suffix = 'Complete')
+
+        frame = Image.new('RGBA', (width, height))
+        frDraw = ImageDraw.Draw(frame)
+        frDraw.rectangle((0, 0, width, height), fill=backgroundColour)
+        img_pil = Image.new('RGBA', (width, height))
+        draw = ImageDraw.Draw(img_pil)
+        draw.text((372, 1840+26), driverName, font = font75, fill=textForegroundColour, anchor="lm")
+        draw.text((382, 1764+26), str(settings.driverNumber), font = font80, fill=textForegroundColour, anchor="lm")
+        draw.rectangle((352, 1758, 367, 1818), fill=classInfo["colour"])
+        draw.rectangle((332, 1914, 332 + 850, 1919), fill=textForegroundColour)
+        draw.text((506, 1764+26), settings.teamName, font = font75, fill=textForegroundColour, anchor="lm")
+
+        # Calculating Time Text
+        timeLarge  = formatTimeLarge(timeArr[-1])
+        timeMil = str(float(timeArr[-1]) - math.trunc(float(timeArr[-1])))
+        draw.text((332+170*0.6, 2000), timeMil[1:][:3], font = font80, fill=textForegroundColour, anchor="lb")
+        draw.text((332+170*0.6, 2000), timeLarge, font = font80, fill=textForegroundColour, anchor="rb")
+
+        imgBlurred = drawWithBlur(img_pil)
+        frame.paste(imgBlurred, imgBlurred)
+        frame = cv2.cvtColor(np.array(frame), cv2.COLOR_RGB2BGR)
+
+        for i in range(int(frameRate*10)):
+                video.write(frame)
 
         return "success"

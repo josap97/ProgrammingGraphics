@@ -9,6 +9,7 @@ virtualenv env --python=python3.6
 source env/bin/activate
 pip install numpy
 pip install opencv-python
+pip install Pillow
 ```
 Unpack the python files and filestructure in the repositry to a folder on you desktop and change the `runGraphics.bat` file to match your installation.
 
@@ -40,9 +41,13 @@ The script uses MOTEC data to create graphics but, for some reason, you cannot j
         * astonMartin
         * alfaRomeo
     d2. `team` for `GT` is the car brand. A file must be placed in `assets/brands` with the corresponding brand name. This is not case sensitive but punctuation and thus spacing is important! The most common brands are included (Mercedes, Aston Martin, Porsche, BMW, Ferrari etc.)
-    e. `year` rough year to create the overlay style from, primarily used for F1 style with options `2008,2017`
+    d3. `team` for `endu` is a string giving the team name verbatim
+    e1. `year` rough year to create the overlay style from, primarily used for F1 style with options `2008,2017`
+    e2. `year` for `endu` is used as a container for the car class. Available are: `LMP1, LMH, DPi, LMP2, LMP3, GTEPro, GTEAM, GTLM, GTD, GTP`
     f. `series` series to determine the overlay style. Options are: `F1,GT`
     g. `info` is a container for any information you want to add to the file name, the script does not look at this so if free to fill in as you please
+
+Please note, the `endurance` graphics blurring requires each frame to be generated before a blurr is applied to it and pasted over twice. As a result, these graphics are noticeably slower to run this is why it is disabled by default. To enable it change `enableEnduranceBlur = false` to `enableEnduranceBlur = true` in the `config.ini`. To regain the blurring effect, apply the alpha glow effect in Premiere Pro. A preset has been provided in `assets/endurance/premiereProPreset.prfpset`.
 ## Running the code
 That's it, all the preparation has been done and you can run the `*.bat` file or open the `main.py` file in a Python interpreter and run it. This will automatically run the code for all csv files located in the data folder and export the video with the same name in the `/output/` folder.
 ## Using the resulting video
@@ -54,3 +59,6 @@ It is not possible to generate a video with transparency layers, this is why the
 5. You can now finetune the look by changing the other sliders, I found that leaving the Setting to `Default` looks best
 ## Customisation
 It is possible to customise the way the graphics look by changing the images in `assets` to match what you want them to look like. The photoshop files are provided. However, do make sure that you export the files under the same name and with the same resolution! Equal aspect ratio simply is not enough as the images are pasted on the frame directly without any resizing. I may add this in the future but do not really see the point of spending that time for now.
+
+## Sources
+Bebas font used in the endurance overlay sourced from: https://fonts.google.com/specimen/Bebas+Neue

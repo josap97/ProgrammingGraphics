@@ -87,6 +87,8 @@ def readACArr(dataArr):
         result['throttle'] = np.transpose(npFullArray[:,4*26+7]).astype(np.float64)
         result['steering'] = np.transpose(npFullArray[:,3*26+25]).astype(np.float64)
         result['maxRPM'] = max(np.transpose(npFullArray[:,2*26+9]).astype(np.int64))
+        result['airTemp'] = np.transpose(npFullArray[:,14]).astype(np.float64)
+        result['trackTemp'] = np.transpose(npFullArray[:,96]).astype(np.float64)
         return result
 
 def readACC(dataArr):
@@ -126,4 +128,25 @@ def readACCArr(dataArr):
         result['throttle'] = np.transpose(npFullArray[:,7]).astype(np.float64)
         result['steering'] = np.transpose(npFullArray[:,5]).astype(np.float64)
         result['maxRPM'] = max(np.transpose(npFullArray[:,12]).astype(np.int64))
+        return result
+
+def readrF2Arr(dataArr):
+        result = dict()
+        # Define Arrays
+        npFullArray = np.array(dataArr)
+        result['FPS'] = npFullArray[8][1]
+        lapTime = npFullArray[9][1]
+        npFullArray = npFullArray[18:,:]
+        result['time'] = np.transpose(npFullArray[:,0])
+        result['delta'] = np.transpose(npFullArray[:,7]).astype(np.float64)
+        result['brake'] = np.transpose(npFullArray[:,4]).astype(np.float64)
+        result['RPM'] = np.transpose(npFullArray[:,17]).astype(np.float64)
+        result['gear'] = np.transpose(npFullArray[:,18])
+        result['speed'] = np.transpose(npFullArray[:,2]).astype(np.float64)
+        lastSectorArr = ""
+        result['throttle'] = np.transpose(npFullArray[:,3]).astype(np.float64)
+        result['steering'] = np.transpose(npFullArray[:,16]).astype(np.float64)
+        result['maxRPM'] = max(np.transpose(npFullArray[:,17]).astype(np.int64))
+        result['airTemp'] = np.transpose(npFullArray[:,31]).astype(np.float64)
+        result['trackTemp'] = np.transpose(npFullArray[:,32]).astype(np.float64)
         return result
